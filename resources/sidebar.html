@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-Security-Policy" content="style-src {{csp.source}};">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link href="{{reset.css}}" rel="stylesheet">
+	<link href="{{vscode.css}}" rel="stylesheet">
+	<link href="{{sidebar.css}}" rel="stylesheet">
+</head>
+
+<body>
+	<h3 class="separator">Filter:</h3>
+
+	<label class="checkbox">High
+		<input type="checkbox" checked="checked" id="techdebt-filter-high">
+		<span class="checkmark"></span>
+	</label>
+	<label class="checkbox">Medium
+		<input type="checkbox" checked="checked" id="techdebt-filter-medium">
+		<span class="checkmark"></span>
+	</label>
+	<label class="checkbox">Low
+		<input type="checkbox" checked="checked" id="techdebt-filter-low">
+		<span class="checkmark"></span>
+	</label>
+
+	<h3 class="separator">Technical Debts:</h3>
+	<label id="techdebt-list"></label>
+
+	<script src="{{sidebar.js}}"></script>
+</body>
+
+</html>

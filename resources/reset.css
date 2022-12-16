@@ -9,6 +9,7 @@ html {
   box-sizing: inherit;
 }
 
+html,
 body,
 h1,
 h2,
@@ -17,8 +18,7 @@ h4,
 h5,
 h6,
 p,
-ol,
-ul {
+ol {
   margin: 0;
   padding: 0;
   font-weight: normal;

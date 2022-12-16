@@ -20,7 +20,7 @@
         {
           "id": "vstechdebt-sidebar-view",
           "title": "Technical Debts",
-          "icon": "media/checklist.svg"
+          "icon": "resources/checklist.svg"
         }
       ]
     },
@@ -30,7 +30,7 @@
           "type": "webview",
           "id": "vstechdebt-sidebar",
           "name": "Technical Debts",
-          "icon": "media/checklist.svg",
+          "icon": "resources/checklist.svg",
           "contextualTitle": "Technical Debts"
         }
       ]
