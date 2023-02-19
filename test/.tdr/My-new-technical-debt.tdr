@@ -1,0 +1,14 @@
+{
+    "brief": "My new technical debt",
+    "author": "t_bh",
+    "date": "2023-02-19",
+    "description": "",
+    "category": "techdebt",
+    "severity": "warning",
+    "priority": "",
+    "file": ".",
+    "line": 0,
+    "column": 0,
+    "votes": 1,
+    "discussion": []
+}

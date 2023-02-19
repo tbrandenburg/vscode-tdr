@@ -40,8 +40,12 @@ function update() {
 window.addEventListener('message', event => {
   switch (event.data.type) {
     case 'init':
+      // Init tech debt list
       techDebtList.innerHTML = event.data.data;
+
+      // Start update listener
       update();
+      
       break;
   }
 });
