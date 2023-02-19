@@ -1,12 +1,13 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { TechDebt } from "./techdebt";
+import { TechDebts } from "./techdebt";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	const td = new TechDebt(context);
+	console.log('Congratulations, your extension "vstechdebt" is now active!');
+	const td = new TechDebts(context);
 }
 
 // This method is called when your extension is deactivated

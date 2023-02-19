@@ -1,25 +1,71 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 
 import { TechDebtSidebar } from './webview/sidebar';
 
-export class TechDebt {
+class TechDebt {
+    id: string = "";
+    brief: string = "";
+    author: string = "";
+    date: string = "";
+    description: string = "";
+    owner: string = "";
+    category: string = "techdebt";
+    severity: string = "warning";
+    priority: string = "";
+    file: string = ".";
+    line: number = 0;
+    column: number = 0;
+    votes: number = 1;
+    workitem: string = "";
+    cost: string = "";
+    effort: string = "";
+    impedes: string = "";
+    discussion: any[] = [];
+    tags: string[] = [];
+
+    constructor(brief: string) {
+
+        const currentDate = new Date();
+
+        const day = currentDate.getDate().toString().padStart(2, "0");
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+        const year = currentDate.getFullYear().toString();
+
+        const formattedDate = `${year}-${month}-${day}`;
+
+        this.brief = brief;
+
+        this.author = os.userInfo().username;
+
+        this.date = formattedDate;
+    }
+
+    static fromJSON(json: string): TechDebt {
+        const obj = JSON.parse(json);
+        const td = new TechDebt(obj.brief);
+        return td;
+    }
+}
+
+export class TechDebts {
     constructor(context: vscode.ExtensionContext) {
 
         const sidebar = new TechDebtSidebar(context);
-    
-        // Use the console to output diagnostic information (console.log) and errors (console.error)
-        // This line of code will only be executed once when your extension is activated
-        console.log('Congratulations, your extension "vstechdebt" is now active!');
-    
-        context.subscriptions.push(
-            vscode.commands.registerCommand('vstechdebt.addTechDebt', () => {
 
-        // Get the root path of the current workspace
-        const workspaceRoot = vscode.workspace.rootPath;
+        // Register Listener for onDidChangeWorkspaceFolders event
+        vscode.workspace.onDidChangeWorkspaceFolders(event => {
+            this.getTechDebtsInWorkspace();
+        });
 
-        if (workspaceRoot) {
+        this.getTechDebtsInWorkspace();
+    }
+
+    private getTechDebtsInWorkspace() {
+
+        if (vscode.workspace.workspaceFolders !== undefined) {
             // Use the workspace root path to find all TDR files
             const files = vscode.workspace.findFiles('**/*.tdr', '**/node_modules/**', 1000);
 
@@ -38,9 +84,8 @@ export class TechDebt {
 
                         // Parse the TDR data
                         try {
-                            const tdrData = JSON.parse(data);
+                            this.createProblem(TechDebt.fromJSON(data));
                             console.log(`Successfully parsed TDR from file: ${fileName}`);
-                            console.log(tdrData);
                         } catch (err) {
                             console.error(`Error parsing TDR from file: ${fileName}`);
                             console.error(err);
@@ -51,21 +96,17 @@ export class TechDebt {
         } else {
             vscode.window.showErrorMessage('No workspace open');
         }
-            }));
-    
-        // Register sidebar
-        context.subscriptions.push(
-            vscode.window.registerWebviewViewProvider("vstechdebt-sidebar", sidebar)
+    }
+
+    private createProblem(td: TechDebt) {
+        const diagnostic = new vscode.Diagnostic(
+            new vscode.Range(td.line, td.column, td.line, td.column), // Bereich des Problems
+            td.brief, // Beschreibung des Problems
+            vscode.DiagnosticSeverity.Warning // Schweregrad des Problems
         );
-    
-        context.subscriptions.push(
-            vscode.commands.registerCommand("vstechdebt.refresh", async () => {
-                await vscode.commands.executeCommand("workbench.action.closeSidebar");
-                await vscode.commands.executeCommand(
-                    "workbench.view.extension.vstechdebt-sidebar-view"
-                );
-            })
-        );
+        const uri = vscode.Uri.file(td.file);
+        const diagnostics = vscode.languages.createDiagnosticCollection('TechDebts');
+        diagnostics.set(uri, [diagnostic]);
     }
 }
 

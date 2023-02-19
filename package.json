@@ -10,44 +10,11 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vstechdebt.addTechDebt",
-    "onView:vstechdebt-sidebar"
+    "onStartupFinished",
+    "onDebug",
+    "workspaceContains:**/*.tdr"
   ],
   "main": "./out/extension.js",
-  "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "vstechdebt-sidebar-view",
-          "title": "Technical Debts",
-          "icon": "resources/checklist.svg"
-        }
-      ]
-    },
-    "views": {
-      "vstechdebt-sidebar-view": [
-        {
-          "type": "webview",
-          "id": "vstechdebt-sidebar",
-          "name": "Technical Debts",
-          "icon": "resources/checklist.svg",
-          "contextualTitle": "Technical Debts"
-        }
-      ]
-    },
-    "commands": [
-      {
-        "command": "vstechdebt.addTechDebt",
-        "category": "Technical Debts",
-        "title": "Add technical debt"
-      },
-      {
-        "command": "vstechdebt.refresh",
-        "category": "Technical Debts",
-        "title": "Refresh"
-      }
-    ]
-  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
