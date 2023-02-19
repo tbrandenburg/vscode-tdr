@@ -94,7 +94,7 @@ export class TechDebts {
                 });
             });
         } else {
-            vscode.window.showErrorMessage('No workspace open');
+            // Nothing to do
         }
     }
 
