@@ -96,31 +96,6 @@ export class TechDebts {
         }
     }
 
-    private loadTechDebt(json: ITechDebt): ITechDebt {
-        const techDebt: Required<ITechDebt> = {
-            id: json.id ?? "",
-            brief: json.brief,
-            author: json.author ?? "",
-            date: json.date ?? "",
-            description: json.description ?? "",
-            owner: json.owner ?? "",
-            priority: json.priority ?? "",
-            votes: json.votes ?? 0,
-            workitem: json.workitem ?? "",
-            cost: json.cost ?? "",
-            effort: json.effort ?? "",
-            impedes: json.impedes ?? "",
-            discussion: json.discussion ?? [],
-            tags: json.tags ?? [],
-            category: json.category ?? "techdebt",
-            severity: json.severity ?? "warning",
-            file: json.file ?? ".",
-            line: json.line ?? 0,
-            column: json.column ?? 0
-        };
-        return techDebt;
-    }
-
     private getTechDebtsInWorkspace() {
 
         if (vscode.workspace.workspaceFolders !== undefined) {
@@ -142,7 +117,7 @@ export class TechDebts {
 
                         // Parse the TDR data
                         try {
-                            this.createProblem(this.loadTechDebt(JSON.parse(data)));
+                            this.createProblem(JSON.parse(data));
                             console.log(`Successfully parsed TDR from file: ${fileName}`);
                         } catch (err) {
                             console.error(`Error parsing TDR from file: ${fileName}`);
