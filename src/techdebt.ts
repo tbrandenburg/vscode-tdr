@@ -69,9 +69,7 @@ export class TechDebts {
                 brief: brief,
                 author: os.userInfo().username,
                 date: formattedDate,
-                file: path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath),
-                line: 0,
-                column: 0
+                file: path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath)
             };
             const tdFilePath = path.join(path.dirname(uri.fsPath), ".tdr", tdFileName);
 
