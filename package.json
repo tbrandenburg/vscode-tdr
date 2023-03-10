@@ -1,55 +1,40 @@
 {
-  "name": "vstechdebt",
-  "displayName": "vstechdebt",
-  "description": "",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.74.0"
-  },
-  "categories": [
-    "Other"
-  ],
   "activationEvents": [
     "onStartupFinished",
     "onDebug",
     "workspaceContains:**/*.tdr"
   ],
+  "categories": [
+    "Other"
+  ],
   "contributes": {
+    "commands": [
+      {
+        "category": "Technical Debts",
+        "command": "vstechdebt.addTechDebt",
+        "title": "Add technical debt"
+      }
+    ],
     "languages": [
       {
-        "id": "tdr",
         "extensions": [
           ".tdr"
-        ]
+        ],
+        "id": "tdr"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "vstechdebt.addTechDebt",
-          "when": "explorerViewletVisible",
+          "command": "vscode-tdr.addTechDebt",
           "group": "techdebt",
-          "title": "Add technical debt"
+          "title": "Add technical debt",
+          "when": "explorerViewletVisible"
         }
       ]
-    },
-    "commands": [
-      {
-        "command": "vstechdebt.addTechDebt",
-        "title": "Add technical debt",
-        "category": "Technical Debts"
-      }
-    ]
+    }
   },
-  "main": "./out/extension.js",
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
-  },
+  "description": "",
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.1",
@@ -62,5 +47,20 @@
     "glob": "^8.0.3",
     "mocha": "^10.1.0",
     "typescript": "^4.9.3"
-  }
+  },
+  "displayName": "vscode-tdr",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "main": "./out/extension.js",
+  "name": "vscode-tdr",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "lint": "eslint src --ext ts",
+    "pretest": "npm run compile && npm run lint",
+    "test": "node ./out/test/runTest.js",
+    "vscode:prepublish": "npm run compile",
+    "watch": "tsc -watch -p ./"
+  },
+  "version": "0.0.1"
 }
