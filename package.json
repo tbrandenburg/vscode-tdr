@@ -10,8 +10,8 @@
   "contributes": {
     "commands": [
       {
+        "command": "vscode-tdr.addTechDebt",
         "category": "Technical Debts",
-        "command": "vstechdebt.addTechDebt",
         "title": "Add technical debt"
       }
     ],
