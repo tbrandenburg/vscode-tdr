@@ -4,127 +4,166 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as crypto from 'crypto';
 
+const fm = require('front-matter');
+const yaml = require('js-yaml');
+
 import { TechDebtSidebar } from './webview/sidebar';
 
-interface ITechDebt {
-    id?: string;
-    brief: string;
-    author?: string;
-    date?: string;
-    description?: string;
-    owner?: string;
-    category?: string;
-    severity?: string;
+interface ITechDebtMetadata {
+    id?: string;                 // Identifier of the technical debt
+    title: string;               // Title of the technical debt
+    author?: string;             // Author of the technical debt record
+    date?: string;               // Date of the technical debt record
+    owner?: string;              // Solution owner/Responsible
+    status?: string;             // Such as new, in progress, closed, deferred
+    resolution?: string;         // Such as solved, invalid, duplicate
+    type?: string;               // Type of technical debt
+    severity?: string;           // Such as minor, normal, major, critical, blocker (+warning, information, hint)
+
+    /* Low:    <10%    it is rather unlikely this debt gets relevant in the project
+     * Medium: 10-50%  medium likelihood the debt gets relevant
+     * High:   >50%    it is very likely that this debt gets relevant in the project
+     */
     priority?: string;
-    file: string;
+
+    file?: string;               // Location of technical debt
     line?: number;
     column?: number;
-    workitem?: string[];
-    cost?: string;
-    effort?: string;
-    impedes?: string;
+    workitem?: string[];         // Ticket URL/Id
+    cost?: string;               // Such as low, medium, high
+    effort?: string;             // Such as low, medium, high
+    detectionPhase?: string;     // When it was detected?
+    detectionMethod?: string;    // How it was detected?
+    injectionPhase?: string;     // When it was injected/created?
+    injectionQualifier?: string; // Why it was injected/created?
     tags?: string[];
+}
+
+interface ITechDebt {
+    metadata: ITechDebtMetadata;
+    description?: string;
 }
 
 class TechDebt {
     private _td: ITechDebt = {
-        brief: "",
-        file: "."
+        metadata: {
+            title: ""
+        }
     };
 
     private _discussion: any[] = [];
     private _votes: string[] = [];
 
     constructor() {
-        this.init("", ".");
+        this.init();
     }
 
-    get values(): ITechDebt {
-        return this._td;
+    get metadata(): ITechDebtMetadata {
+        return this._td.metadata;
     }
 
-    set values(techDebt: ITechDebt) {
-        this.brief = techDebt.brief;
-        this.file = techDebt.file;
-        if (techDebt.id)          { this.id = techDebt.id; };
-        if (techDebt.author)      { this.author = techDebt.author; };
-        if (techDebt.date)        { this.date = techDebt.date; };
-        if (techDebt.description) { this.description = techDebt.description; };
-        if (techDebt.owner)       { this.owner = techDebt.owner; };
-        if (techDebt.category)    { this.category = techDebt.category; };
-        if (techDebt.severity)    { this.severity = techDebt.severity; };
-        if (techDebt.priority)    { this.priority = techDebt.priority; };
-        if (techDebt.line)        { this.line = techDebt.line; };
-        if (techDebt.column)      { this.column = techDebt.column; };
-        if (techDebt.workitem)    { this.workitem = techDebt.workitem; };
-        if (techDebt.cost)        { this.cost = techDebt.cost; };
-        if (techDebt.effort)      { this.effort = techDebt.effort; };
-        if (techDebt.impedes)     { this.impedes = techDebt.impedes; };
-        if (techDebt.tags)        { this.tags = techDebt.tags; };
+    set metadata(techDebt: ITechDebtMetadata) {
+        this.title = techDebt.title;
+        if (techDebt.file) { this.file = techDebt.file; };
+        if (techDebt.id) { this.id = techDebt.id; };
+        if (techDebt.author) { this.author = techDebt.author; };
+        if (techDebt.date) { this.date = techDebt.date; };
+        if (techDebt.owner) { this.owner = techDebt.owner; };
+        if (techDebt.status) { this.status = techDebt.status; };
+        if (techDebt.resolution) { this.resolution = techDebt.resolution; };
+        if (techDebt.type) { this.type = techDebt.type; };
+        if (techDebt.severity) { this.severity = techDebt.severity; };
+        if (techDebt.priority) { this.priority = techDebt.priority; };
+        if (techDebt.line) { this.line = techDebt.line; };
+        if (techDebt.column) { this.column = techDebt.column; };
+        if (techDebt.workitem) { this.workitem = techDebt.workitem; };
+        if (techDebt.cost) { this.cost = techDebt.cost; };
+        if (techDebt.effort) { this.effort = techDebt.effort; };
+        if (techDebt.detectionPhase) { this.detectionPhase = techDebt.detectionPhase; };
+        if (techDebt.detectionMethod) { this.detectionMethod = techDebt.detectionMethod; };
+        if (techDebt.injectionPhase) { this.injectionPhase = techDebt.injectionPhase; };
+        if (techDebt.injectionQualifier) { this.injectionQualifier = techDebt.injectionQualifier; };
+        if (techDebt.tags) { this.tags = techDebt.tags; };
     }
 
     get id(): string {
-        return this._td.id || "";
+        return this._td.metadata.id || "";
     }
 
-    get brief(): string {
-        return this._td.brief;
+    get title(): string {
+        return this._td.metadata.title;
     }
 
     get author(): string {
-        return this._td.author || "";
+        return this._td.metadata.author || "";
     }
 
     get date(): string {
-        return this._td.date || "";
-    }
-
-    get description(): string {
-        return this._td.description || "";
+        return this._td.metadata.date || "";
     }
 
     get owner(): string {
-        return this._td.owner || "";
+        return this._td.metadata.owner || "";
     }
 
-    get category(): string {
-        return this._td.category || "";
+    get status(): string {
+        return this._td.metadata.status || "";
+    }
+
+    get resolution(): string {
+        return this._td.metadata.resolution || "";
+    }
+
+    get type(): string {
+        return this._td.metadata.type || "";
     }
 
     get severity(): string {
-        return this._td.severity || "";
+        return this._td.metadata.severity || "";
     }
 
     get priority(): string {
-        return this._td.priority || "";
+        return this._td.metadata.priority || "";
     }
 
     get file(): string {
-        return this._td.file;
+        return this._td.metadata.file || ".";
     }
 
     get line(): number {
-        return this._td.line || 0;
+        return this._td.metadata.line || 0;
     }
 
     get column(): number {
-        return this._td.column || 0;
+        return this._td.metadata.column || 0;
     }
 
     get workitem(): string[] {
-        return this._td.workitem || [];
+        return this._td.metadata.workitem || [];
     }
 
     get cost(): string {
-        return this._td.cost || "";
+        return this._td.metadata.cost || "";
     }
 
     get effort(): string {
-        return this._td.effort || "";
+        return this._td.metadata.effort || "";
     }
 
-    get impedes(): string {
-        return this._td.impedes || "";
+    get detectionPhase(): string {
+        return this._td.metadata.detectionPhase || "";
+    }
+
+    get detectionMethod(): string {
+        return this._td.metadata.detectionMethod || "";
+    }
+
+    get injectionPhase(): string {
+        return this._td.metadata.injectionPhase || "";
+    }
+
+    get injectionQualifier(): string {
+        return this._td.metadata.injectionQualifier || "";
     }
 
     get votes(): string[] {
@@ -136,83 +175,107 @@ class TechDebt {
     }
 
     get tags(): any {
-        return this._td.tags || [];
+        return this._td.metadata.tags || [];
+    }
+
+    get description(): string {
+        return this._td.description || "";
     }
 
     set id(id: string) {
-        this._td.id = id;
+        this._td.metadata.id = id;
     }
 
-    set brief(brief: string) {
-        this._td.brief = brief;
+    set title(title: string) {
+        this._td.metadata.title = title;
     }
 
     set author(author: string) {
-        this._td.author = author;
+        this._td.metadata.author = author;
     }
 
     set date(date: string) {
-        this._td.date = date;
-    }
-
-    set description(description: string) {
-        this._td.description = description;
+        this._td.metadata.date = date;
     }
 
     set owner(owner: string) {
-        this._td.owner = owner;
+        this._td.metadata.owner = owner;
     }
 
-    set category(category: string) {
-        this._td.category = category;
+    set status(status: string) {
+        this._td.metadata.status = status;
+    }
+
+    set resolution(resolution: string) {
+        this._td.metadata.resolution = resolution;
+    }
+
+    set type(type: string) {
+        this._td.metadata.type = type;
     }
 
     set severity(severity: string) {
-        this._td.severity = severity;
+        this._td.metadata.severity = severity;
     }
 
     set priority(priority: string) {
-        this._td.priority = priority;
+        this._td.metadata.priority = priority;
     }
 
     set file(file: string) {
-        this._td.file = file;
+        this._td.metadata.file = file;
     }
 
     set line(line: number) {
-        this._td.line = line;
+        this._td.metadata.line = line;
     }
 
     set column(column: number) {
-        this._td.column = column;
+        this._td.metadata.column = column;
     }
 
     set workitem(workitems: string[]) {
-        this._td.workitem = workitems;
+        this._td.metadata.workitem = workitems;
     }
 
     public addWorkItem(workitem: string) {
-        if (this._td.workitem) {
-            this._td.workitem.push(workitem);
+        if (this._td.metadata.workitem) {
+            this._td.metadata.workitem.push(workitem);
         } else {
-            this._td.workitem = [workitem];
+            this._td.metadata.workitem = [workitem];
         }
     }
 
     set cost(cost: string) {
-        this._td.cost = cost;
+        this._td.metadata.cost = cost;
     }
 
     set effort(effort: string) {
-        this._td.effort = effort;
+        this._td.metadata.effort = effort;
     }
 
-    set impedes(impedes: string) {
-        this._td.impedes = impedes;
+    set detectionPhase(detectionPhase: string) {
+        this._td.metadata.detectionPhase = detectionPhase;
+    }
+
+    set detectionMethod(detectionMethod: string) {
+        this._td.metadata.detectionMethod = detectionMethod;
+    }
+
+    set injectionPhase(injectionPhase: string) {
+        this._td.metadata.injectionPhase = injectionPhase;
+    }
+
+    set injectionQualifier(injectionQualifier: string) {
+        this._td.metadata.injectionQualifier = injectionQualifier;
     }
 
     set votes(votes: string[]) {
         this._votes = votes;
+    }
+
+    set description(description: string) {
+        this._td.description = description;
     }
 
     public addVote(vote: string) {
@@ -236,14 +299,14 @@ class TechDebt {
     }
 
     set tags(tags: string[]) {
-        this._td.tags = tags;
+        this._td.metadata.tags = tags;
     }
 
     public addTag(tag: string) {
-        if (this._td.tags) {
-            this._td.tags.push(tag);
+        if (this._td.metadata.tags) {
+            this._td.metadata.tags.push(tag);
         } else {
-            this._td.tags = [tag];
+            this._td.metadata.tags = [tag];
         }
     }
 
@@ -251,11 +314,23 @@ class TechDebt {
         if (vscode.workspace.workspaceFolders !== undefined) {
             const diagnostic = new vscode.Diagnostic(
                 new vscode.Range(this.line, this.column, this.line, this.column),
-                this.brief
+                this.title
             );
             switch (this.severity) {
                 case "error":
-                    diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                    diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                    break;
+                case "major":
+                    diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                    break;
+                case "critical":
+                    diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                    break;
+                case "blocker":
+                    diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                    break;
+                case "minor":
+                    diagnostic.severity = vscode.DiagnosticSeverity.Information;
                     break;
                 case "information":
                     diagnostic.severity = vscode.DiagnosticSeverity.Information;
@@ -289,10 +364,18 @@ class TechDebt {
     }
 
     public toString(): string {
-        return JSON.stringify(this.values, null, 4);
+        return "---" + os.EOL + yaml.dump(this.metadata) + "---" + os.EOL + this.description;
     }
 
-    public init(brief: string, file: string) {
+    public fromString(mmd: string) {
+        const parsedData = fm(mmd);
+
+        this.metadata = parsedData.attributes;
+
+        this.description = parsedData.body;
+    }
+
+    public init(title?: string) {
         const currentDate = new Date();
 
         const day = currentDate.getDate().toString().padStart(2, "0");
@@ -301,13 +384,20 @@ class TechDebt {
 
         const formattedDate = `${year}-${month}-${day}`;
 
-        this.values = {
-            id: "TDR_" + crypto.createHash('sha256').update(brief + currentDate).digest('hex').toUpperCase().substring(0, 8),
-            brief: brief,
+        this.metadata = {
+            id: "TDR_" + crypto.createHash('sha256').update((title || "") + currentDate).digest('hex').toUpperCase().substring(0, 8),
+            title: title || "",
             author: os.userInfo().username,
-            date: formattedDate,
-            file: file
+            date: formattedDate
         };
+
+        this.description = os.EOL + "# " + title + os.EOL + os.EOL;
+        this.description += "## Description" + os.EOL + os.EOL;      // What is the issue?
+        this.description += "## Impedes" + os.EOL + os.EOL;          // What happens if we don't fix it?
+        this.description += "## Costs" + os.EOL + os.EOL;            // What does it means in terms of costs if we don't fix it?
+        this.description += "## Effort to fix" + os.EOL + os.EOL;    // How much will it cost to resolve?
+        this.description += "## Solution(s)" + os.EOL + os.EOL;
+        this.description += "## Decision" + os.EOL + os.EOL;
     }
 
     public persist(tdrPath: string): boolean {
@@ -345,24 +435,28 @@ export class TechDebts {
             this.addTechDebt(selectedResourceUri);
         }));
 
+        // Register tdr for markdown
+        vscode.workspace.getConfiguration().update("files.associations", {"*.tdr": "markdown"}, false);
+
         this.getTechDebtsInWorkspace();
     }
 
     private async addTechDebt(uri: vscode.Uri) {
 
-        var brief = await vscode.window.showInputBox({
-            prompt: 'Enter a brief description for the technical debt:',
+        var title = await vscode.window.showInputBox({
+            prompt: 'Enter a title for the technical debt:',
             placeHolder: path.basename(uri.fsPath),
         });
 
-        if (brief && (vscode.workspace.workspaceFolders !== undefined)) {
-            var tdFileName = brief.replace(/\s+/g, '-');
+        if (title && (vscode.workspace.workspaceFolders !== undefined)) {
+            var tdFileName = title.replace(/\s+/g, '-');
             tdFileName = tdFileName.replace(/[^\w-]/gi, '') + ".tdr";
 
             const tdFilePath = path.join(path.dirname(uri.fsPath), ".tdr", tdFileName);
 
             const td = new TechDebt();
-            td.init(brief, path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath));
+            td.init(title);
+            td.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
             td.raiseProblem();
             td.persist(tdFilePath);
         }
@@ -390,7 +484,7 @@ export class TechDebts {
                         // Parse the TDR data
                         try {
                             const td = new TechDebt();
-                            td.values = JSON.parse(data);
+                            td.fromString(data);
                             td.raiseProblem();
                             this._tds[td.id] = td;
                             console.log(`Successfully parsed TDR from file: ${fileName}`);

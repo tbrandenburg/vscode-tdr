@@ -20,7 +20,7 @@
         "extensions": [
           ".tdr"
         ],
-        "id": "tdr"
+        "id": "technical-debt-record"
       }
     ],
     "menus": {
@@ -62,5 +62,9 @@
     "vscode:prepublish": "npm run compile",
     "watch": "tsc -watch -p ./"
   },
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "dependencies": {
+    "front-matter": "^4.0.2",
+    "js-yaml": "^4.1.0"
+  }
 }
