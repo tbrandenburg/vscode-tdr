@@ -17,7 +17,7 @@ interface ITechDebtMetadata {
     owner?: string;              // Solution owner/Responsible
     status?: string;             // Such as new, in progress, closed, deferred
     resolution?: string;         // Such as solved, invalid, duplicate
-    type?: string;               // Type of technical debt
+    type?: string;               // Type of technical debt record, e.g. Technical Debt, TODO, FIXME etc.
     severity?: string;           // Such as minor, normal, major, critical, blocker (+warning, information, hint)
 
     /* Low:    <10%    it is rather unlikely this debt gets relevant in the project
@@ -27,8 +27,10 @@ interface ITechDebtMetadata {
     priority?: string;
 
     file?: string;               // Location of technical debt
-    line?: number;
-    column?: number;
+    startLine?: number;
+    startColumn?: number;
+    endLine?: number;
+    endColumn?: number;
     workitem?: string[];         // Ticket URL/Id
     cost?: string;               // Such as low, medium, high
     effort?: string;             // Such as low, medium, high
@@ -74,8 +76,10 @@ class TechDebt {
         if (techDebt.type) { this.type = techDebt.type; };
         if (techDebt.severity) { this.severity = techDebt.severity; };
         if (techDebt.priority) { this.priority = techDebt.priority; };
-        if (techDebt.line) { this.line = techDebt.line; };
-        if (techDebt.column) { this.column = techDebt.column; };
+        if (techDebt.startLine) { this.startLine = techDebt.startLine; };
+        if (techDebt.startColumn) { this.startColumn = techDebt.startColumn; };
+        if (techDebt.endLine) { this.endLine = techDebt.endLine; };
+        if (techDebt.endColumn) { this.endColumn = techDebt.endColumn; };
         if (techDebt.workitem) { this.workitem = techDebt.workitem; };
         if (techDebt.cost) { this.cost = techDebt.cost; };
         if (techDebt.effort) { this.effort = techDebt.effort; };
@@ -130,12 +134,20 @@ class TechDebt {
         return this._td.metadata.file || ".";
     }
 
-    get line(): number {
-        return this._td.metadata.line || 0;
+    get startLine(): number {
+        return this._td.metadata.startLine || 0;
     }
 
-    get column(): number {
-        return this._td.metadata.column || 0;
+    get startColumn(): number {
+        return this._td.metadata.startColumn || 0;
+    }
+
+    get endLine(): number {
+        return this._td.metadata.endLine || 0;
+    }
+
+    get endColumn(): number {
+        return this._td.metadata.endColumn || 0;
     }
 
     get workitem(): string[] {
@@ -226,12 +238,20 @@ class TechDebt {
         this._td.metadata.file = file;
     }
 
-    set line(line: number) {
-        this._td.metadata.line = line;
+    set startLine(line: number) {
+        this._td.metadata.startLine = line;
     }
 
-    set column(column: number) {
-        this._td.metadata.column = column;
+    set startColumn(column: number) {
+        this._td.metadata.startColumn = column;
+    }
+
+    set endLine(line: number) {
+        this._td.metadata.endLine = line;
+    }
+
+    set endColumn(column: number) {
+        this._td.metadata.endColumn = column;
     }
 
     set workitem(workitems: string[]) {
@@ -313,9 +333,12 @@ class TechDebt {
     private getDiagnostic(): any {
         if (vscode.workspace.workspaceFolders !== undefined) {
             const diagnostic = new vscode.Diagnostic(
-                new vscode.Range(this.line, this.column, this.line, this.column),
+                new vscode.Range(this.startLine, this.startColumn, this.endLine, this.endColumn),
                 this.title
             );
+
+            diagnostic.source = this.type || "Technical Debt";
+
             switch (this.severity) {
                 case "error":
                     diagnostic.severity = vscode.DiagnosticSeverity.Error;
@@ -431,8 +454,22 @@ export class TechDebts {
             this.getTechDebtsInWorkspace();
         });
 
-        context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addTechDebt', async (selectedResourceUri: vscode.Uri) => {
+        context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addExplorerTechDebt', async (selectedResourceUri: vscode.Uri) => {
             this.addTechDebt(selectedResourceUri);
+        }));
+
+        context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addEditorTechDebt', async (selectedResourceUri: vscode.Uri) => {
+            let editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                return; // No active editor
+            }
+            let selection = editor.selection;
+            if (selection.isEmpty) {
+                let cursorPosition = editor.selection.active;
+                this.addTechDebt(selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
+            } else {
+                this.addTechDebt(selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+            }
         }));
 
         // Register tdr for markdown
@@ -441,7 +478,7 @@ export class TechDebts {
         this.getTechDebtsInWorkspace();
     }
 
-    private async addTechDebt(uri: vscode.Uri) {
+    private async addTechDebt(uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
 
         var title = await vscode.window.showInputBox({
             prompt: 'Enter a title for the technical debt:',
@@ -457,6 +494,18 @@ export class TechDebts {
             const td = new TechDebt();
             td.init(title);
             td.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
+            if(startLine) {
+                td.startLine = startLine;
+            }
+            if(startColumn) {
+                td.startColumn = startColumn;
+            }
+            if(endLine) {
+                td.endLine = endLine;
+            }
+            if(endColumn) {
+                td.endColumn = endColumn;
+            }
             td.raiseProblem();
             td.persist(tdFilePath);
         }

@@ -10,9 +10,14 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-tdr.addTechDebt",
+        "command": "vscode-tdr.addExplorerTechDebt",
         "category": "Technical Debts",
         "title": "Add technical debt"
+      },
+      {
+        "command": "vscode-tdr.addEditorTechDebt",
+        "category": "Technical Debts",
+        "title": "Add technical debt here"
       }
     ],
     "languages": [
@@ -26,11 +31,17 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "vscode-tdr.addTechDebt",
+          "command": "vscode-tdr.addExplorerTechDebt",
           "group": "techdebt",
-          "title": "Add technical debt",
           "when": "explorerViewletVisible"
         }
+      ],
+      "editor/context": [
+        {
+          "command": "vscode-tdr.addEditorTechDebt",
+          "group": "techdebt",
+          "when": "editorTextFocus"
+        }        
       ]
     }
   },
