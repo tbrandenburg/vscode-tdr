@@ -4,8 +4,7 @@ const tsVscode = acquireVsCodeApi();
 // Create reference to existing html elements
 var techDebtFilterHigh = document.getElementById('techdebt-filter-high'),
   techDebtFilterMedium = document.getElementById('techdebt-filter-medium'),
-  techDebtFilterLow = document.getElementById('techdebt-filter-low'),
-  techDebtList = document.getElementById('techdebt-list');
+  techDebtFilterLow = document.getElementById('techdebt-filter-low');
 
 // Add listener to checkboxes to trigger update
 techDebtFilterHigh.addEventListener('change', update);
@@ -14,6 +13,7 @@ techDebtFilterLow.addEventListener('change', update);
 
 // Do update if last interaction was after 500ms
 let updateTimeout = null;
+
 function update() {
   // Clear timeout if pending
   clearTimeout(updateTimeout);
@@ -26,29 +26,40 @@ function update() {
   // Set new timeout to prevent multiple calls on text input
   updateTimeout = setTimeout(function () {
     // Check if values are not empty
-    if (options == '') {
-      techDebtList.innerHTML = '';
-      tsVscode.postMessage({ type: 'onError', message: 'Select at least one checkbox option' });
-      return;
+    if (options === '') {
+      // TODO
     } else {
-      techDebtList.innerHTML = options;
+      // TODO
     }
   }, 500);
 }
 
 // Listen for incoming messages
 window.addEventListener('message', event => {
+
   switch (event.data.type) {
     case 'init':
-      // Init tech debt list
-      techDebtList.innerHTML = event.data.data;
+      break;
+    case 'tdrs':
+      const tableBody = document.querySelector('#techdebt-table tbody');
+      const tdrs = event.data.data;
 
-      // Start update listener
-      update();
-      
+      // Assuming it's a dictionary...
+      for (let key in tdrs) {
+        const tr = document.createElement('tr');
+        const tdId = document.createElement('td');
+        const tdTitle = document.createElement('td');
+        tdId.textContent = key;
+        tdTitle.textContent = tdrs[key].resource.metadata.title;
+        tr.appendChild(tdId);
+        tr.appendChild(tdTitle);
+        tableBody.appendChild(tr);
+      }
+      break;
+    default:
       break;
   }
 });
 
-// Request dummy initially
-tsVscode.postMessage({ type: 'tdsbInit' });
+// Start update listener
+update();

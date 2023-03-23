@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as utils from './utils';
+import { TechDebts } from '../techdebt';
 
 /**
  * Webview content provider for sidebar.
@@ -13,14 +14,16 @@ export class TechDebtSidebar implements vscode.WebviewViewProvider {
    * @param {vscode.ExtensionContext}
    * @param {RegexHandler}
    */ 
-  constructor(private context:vscode.ExtensionContext) {}
+  constructor(private context:vscode.ExtensionContext, private tdrs:TechDebts) {}
 
   /**
-   * More like initialization of the webview.
+   * More like initialization of the webview (when sidebar is opened initially)
    * @param {vscode.WebviewView}
    */ 
   public resolveWebviewView(webviewView: vscode.WebviewView) {
+
     const placeholderValues = new Map<string, any>();
+
     placeholderValues.set('reset.css', utils.getAssetURI(this.context, webviewView.webview, 'reset.css'));
     placeholderValues.set('vscode.css', utils.getAssetURI(this.context, webviewView.webview, 'vscode.css'));
     placeholderValues.set('sidebar.css', utils.getAssetURI(this.context, webviewView.webview, 'sidebar.css'));
@@ -36,22 +39,26 @@ export class TechDebtSidebar implements vscode.WebviewViewProvider {
 
     this.webviewView = webviewView;
 
-
     webviewView.webview.onDidReceiveMessage(async (data:any) => {
       switch (data.type) {
-        case 'tdsbInit': {
-          if(this.webviewView != undefined) {
-            this.webviewView.webview.postMessage({type: 'init', data: "Init data"});
+        case 'onInformation': {
+          if (data.message) {
+            vscode.window.showInformationMessage(data.message);
           }
+          break;
         }
         case 'onError': {
-          if (!data.message) {
-            return;
+          if (data.message) {
+            console.log(data.message);
+            vscode.window.showErrorMessage(data.message);
           }
-          vscode.window.showErrorMessage(data.message);
           break;
         }
       }
     });
+
+    const tdrData = this.tdrs.techDebts;
+
+    this.webviewView.webview.postMessage({type: 'tdrs', data: tdrData});
   }
 }

@@ -8,6 +8,26 @@
     "Other"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vscode-tdr-sidebar-view",
+          "title": "Technical Debts",
+          "icon": "resources/checklist.svg"
+        }
+      ]
+    },
+    "views": {
+      "vscode-tdr-sidebar-view": [
+        {
+          "type": "webview",
+          "id": "vscode-tdr-sidebar",
+          "name": "Technical Debts",
+          "icon": "resources/checklist.svg",
+          "contextualTitle": "Technical Debts"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "vscode-tdr.addExplorerTechDebt",

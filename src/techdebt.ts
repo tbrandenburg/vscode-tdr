@@ -47,7 +47,7 @@ interface ITechDebt {
 }
 
 class TechDebt {
-    private _td: ITechDebt = {
+    public resource: ITechDebt = {
         metadata: {
             title: ""
         }
@@ -61,7 +61,7 @@ class TechDebt {
     }
 
     get metadata(): ITechDebtMetadata {
-        return this._td.metadata;
+        return this.resource.metadata;
     }
 
     set metadata(techDebt: ITechDebtMetadata) {
@@ -91,91 +91,91 @@ class TechDebt {
     }
 
     get id(): string {
-        return this._td.metadata.id || "";
+        return this.resource.metadata.id || "";
     }
 
     get title(): string {
-        return this._td.metadata.title;
+        return this.resource.metadata.title;
     }
 
     get author(): string {
-        return this._td.metadata.author || "";
+        return this.resource.metadata.author || "";
     }
 
     get date(): string {
-        return this._td.metadata.date || "";
+        return this.resource.metadata.date || "";
     }
 
     get owner(): string {
-        return this._td.metadata.owner || "";
+        return this.resource.metadata.owner || "";
     }
 
     get status(): string {
-        return this._td.metadata.status || "";
+        return this.resource.metadata.status || "";
     }
 
     get resolution(): string {
-        return this._td.metadata.resolution || "";
+        return this.resource.metadata.resolution || "";
     }
 
     get type(): string {
-        return this._td.metadata.type || "";
+        return this.resource.metadata.type || "";
     }
 
     get severity(): string {
-        return this._td.metadata.severity || "";
+        return this.resource.metadata.severity || "";
     }
 
     get priority(): string {
-        return this._td.metadata.priority || "";
+        return this.resource.metadata.priority || "";
     }
 
     get file(): string {
-        return this._td.metadata.file || ".";
+        return this.resource.metadata.file || ".";
     }
 
     get startLine(): number {
-        return this._td.metadata.startLine || 0;
+        return this.resource.metadata.startLine || 0;
     }
 
     get startColumn(): number {
-        return this._td.metadata.startColumn || 0;
+        return this.resource.metadata.startColumn || 0;
     }
 
     get endLine(): number {
-        return this._td.metadata.endLine || 0;
+        return this.resource.metadata.endLine || 0;
     }
 
     get endColumn(): number {
-        return this._td.metadata.endColumn || 0;
+        return this.resource.metadata.endColumn || 0;
     }
 
     get workitem(): string[] {
-        return this._td.metadata.workitem || [];
+        return this.resource.metadata.workitem || [];
     }
 
     get cost(): string {
-        return this._td.metadata.cost || "";
+        return this.resource.metadata.cost || "";
     }
 
     get effort(): string {
-        return this._td.metadata.effort || "";
+        return this.resource.metadata.effort || "";
     }
 
     get detectionPhase(): string {
-        return this._td.metadata.detectionPhase || "";
+        return this.resource.metadata.detectionPhase || "";
     }
 
     get detectionMethod(): string {
-        return this._td.metadata.detectionMethod || "";
+        return this.resource.metadata.detectionMethod || "";
     }
 
     get injectionPhase(): string {
-        return this._td.metadata.injectionPhase || "";
+        return this.resource.metadata.injectionPhase || "";
     }
 
     get injectionQualifier(): string {
-        return this._td.metadata.injectionQualifier || "";
+        return this.resource.metadata.injectionQualifier || "";
     }
 
     get votes(): string[] {
@@ -187,107 +187,107 @@ class TechDebt {
     }
 
     get tags(): any {
-        return this._td.metadata.tags || [];
+        return this.resource.metadata.tags || [];
     }
 
     get description(): string {
-        return this._td.description || "";
+        return this.resource.description || "";
     }
 
     set id(id: string) {
-        this._td.metadata.id = id;
+        this.resource.metadata.id = id;
     }
 
     set title(title: string) {
-        this._td.metadata.title = title;
+        this.resource.metadata.title = title;
     }
 
     set author(author: string) {
-        this._td.metadata.author = author;
+        this.resource.metadata.author = author;
     }
 
     set date(date: string) {
-        this._td.metadata.date = date;
+        this.resource.metadata.date = date;
     }
 
     set owner(owner: string) {
-        this._td.metadata.owner = owner;
+        this.resource.metadata.owner = owner;
     }
 
     set status(status: string) {
-        this._td.metadata.status = status;
+        this.resource.metadata.status = status;
     }
 
     set resolution(resolution: string) {
-        this._td.metadata.resolution = resolution;
+        this.resource.metadata.resolution = resolution;
     }
 
     set type(type: string) {
-        this._td.metadata.type = type;
+        this.resource.metadata.type = type;
     }
 
     set severity(severity: string) {
-        this._td.metadata.severity = severity;
+        this.resource.metadata.severity = severity;
     }
 
     set priority(priority: string) {
-        this._td.metadata.priority = priority;
+        this.resource.metadata.priority = priority;
     }
 
     set file(file: string) {
-        this._td.metadata.file = file;
+        this.resource.metadata.file = file;
     }
 
     set startLine(line: number) {
-        this._td.metadata.startLine = line;
+        this.resource.metadata.startLine = line;
     }
 
     set startColumn(column: number) {
-        this._td.metadata.startColumn = column;
+        this.resource.metadata.startColumn = column;
     }
 
     set endLine(line: number) {
-        this._td.metadata.endLine = line;
+        this.resource.metadata.endLine = line;
     }
 
     set endColumn(column: number) {
-        this._td.metadata.endColumn = column;
+        this.resource.metadata.endColumn = column;
     }
 
     set workitem(workitems: string[]) {
-        this._td.metadata.workitem = workitems;
+        this.resource.metadata.workitem = workitems;
     }
 
     public addWorkItem(workitem: string) {
-        if (this._td.metadata.workitem) {
-            this._td.metadata.workitem.push(workitem);
+        if (this.resource.metadata.workitem) {
+            this.resource.metadata.workitem.push(workitem);
         } else {
-            this._td.metadata.workitem = [workitem];
+            this.resource.metadata.workitem = [workitem];
         }
     }
 
     set cost(cost: string) {
-        this._td.metadata.cost = cost;
+        this.resource.metadata.cost = cost;
     }
 
     set effort(effort: string) {
-        this._td.metadata.effort = effort;
+        this.resource.metadata.effort = effort;
     }
 
     set detectionPhase(detectionPhase: string) {
-        this._td.metadata.detectionPhase = detectionPhase;
+        this.resource.metadata.detectionPhase = detectionPhase;
     }
 
     set detectionMethod(detectionMethod: string) {
-        this._td.metadata.detectionMethod = detectionMethod;
+        this.resource.metadata.detectionMethod = detectionMethod;
     }
 
     set injectionPhase(injectionPhase: string) {
-        this._td.metadata.injectionPhase = injectionPhase;
+        this.resource.metadata.injectionPhase = injectionPhase;
     }
 
     set injectionQualifier(injectionQualifier: string) {
-        this._td.metadata.injectionQualifier = injectionQualifier;
+        this.resource.metadata.injectionQualifier = injectionQualifier;
     }
 
     set votes(votes: string[]) {
@@ -295,7 +295,7 @@ class TechDebt {
     }
 
     set description(description: string) {
-        this._td.description = description;
+        this.resource.description = description;
     }
 
     public addVote(vote: string) {
@@ -319,14 +319,14 @@ class TechDebt {
     }
 
     set tags(tags: string[]) {
-        this._td.metadata.tags = tags;
+        this.resource.metadata.tags = tags;
     }
 
     public addTag(tag: string) {
-        if (this._td.metadata.tags) {
-            this._td.metadata.tags.push(tag);
+        if (this.resource.metadata.tags) {
+            this.resource.metadata.tags.push(tag);
         } else {
-            this._td.metadata.tags = [tag];
+            this.resource.metadata.tags = [tag];
         }
     }
 
@@ -443,11 +443,11 @@ class TechDebt {
 }
 
 export class TechDebts {
-    private _tds: { [id: string]: TechDebt; } = {};
+    private resources: { [id: string]: TechDebt; } = {};
 
     constructor(context: vscode.ExtensionContext) {
 
-        const sidebar = new TechDebtSidebar(context);
+        const sidebar = new TechDebtSidebar(context, this);
 
         // Register Listener for onDidChangeWorkspaceFolders event
         vscode.workspace.onDidChangeWorkspaceFolders(event => {
@@ -473,7 +473,13 @@ export class TechDebts {
         }));
 
         // Register tdr for markdown
-        vscode.workspace.getConfiguration().update("files.associations", {"*.tdr": "markdown"}, false);
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        vscode.workspace.getConfiguration().update("files.associations", { "*.tdr": "markdown" }, false);
+
+        // Register sidebar
+        context.subscriptions.push(
+            vscode.window.registerWebviewViewProvider("vscode-tdr-sidebar", sidebar)
+        );
 
         this.getTechDebtsInWorkspace();
     }
@@ -494,16 +500,16 @@ export class TechDebts {
             const td = new TechDebt();
             td.init(title);
             td.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
-            if(startLine) {
+            if (startLine) {
                 td.startLine = startLine;
             }
-            if(startColumn) {
+            if (startColumn) {
                 td.startColumn = startColumn;
             }
-            if(endLine) {
+            if (endLine) {
                 td.endLine = endLine;
             }
-            if(endColumn) {
+            if (endColumn) {
                 td.endColumn = endColumn;
             }
             td.raiseProblem();
@@ -535,7 +541,7 @@ export class TechDebts {
                             const td = new TechDebt();
                             td.fromString(data);
                             td.raiseProblem();
-                            this._tds[td.id] = td;
+                            this.resources[td.id] = td;
                             console.log(`Successfully parsed TDR from file: ${fileName}`);
                         } catch (err) {
                             console.error(`Error parsing TDR from file: ${fileName}`);
@@ -550,7 +556,7 @@ export class TechDebts {
     }
 
     get techDebts(): { [id: string]: TechDebt; } {
-        return this._tds;
+        return this.resources;
     }
 }
 
