@@ -18,6 +18,25 @@ body {
 }
 
 /* input area */
+
+form {
+  display:grid;
+  grid-template-columns: 150px 1fr;
+  grid-gap: 10px;
+  align-items: center;
+}
+
+label {
+  grid-column: 1 / 2;
+  vertical-align: middle;
+  text-align: right;
+}
+
+input,
+button {
+  grid-column: 2 / 3;
+}
+
 .checkbox {
   display: block;
   position: relative;
@@ -69,29 +88,17 @@ body {
 	color: var(--vscode-errorForeground) !important;
 }
 
-/* result area */
-#result-tree, ul {
-	list-style-type: none;
+/* tables */
+
+tbody tr:hover {
+  background-color: #e2e2e2;
 }
-#result-tree {
-  margin: 0;
-  padding: 0;
+
+.vscode-dark tbody tr:hover {
+  background-color: #444444;
 }
-.tree-title {
-  cursor: pointer;
-}
-.tree-title::before {
-  content: "\25B6";
-  color: var(--vscode-textLink-activeForeground);
-  display: inline-block;
-  margin-right: 6px;
-}
-.tree-title-down::before {
-  transform: rotate(90deg);
-}
-.nested {
+
+/* misc */
+.hidden {
   display: none;
-}
-.active {
-  display: block;
 }

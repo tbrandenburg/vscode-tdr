@@ -6,35 +6,321 @@
 	<meta http-equiv="Content-Security-Policy" content="style-src {{csp.source}};">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+	<script src="{{jquery.min.js}}"></script>
+	<script src="{{jquery-ui.min.js}}"></script>
+
 	<link href="{{reset.css}}" rel="stylesheet">
 	<link href="{{vscode.css}}" rel="stylesheet">
 	<link href="{{sidebar.css}}" rel="stylesheet">
+	<link href="{{jquery-ui.css}}" rel="stylesheet">
 </head>
 
 <body>
-	<h3 class="separator">Filter:</h3>
+	<h3 class="separator">Properties:</h3>
 
-	<label class="checkbox">High
-		<input type="checkbox" checked="checked" id="techdebt-filter-high">
-		<span class="checkmark"></span>
-	</label>
-	<label class="checkbox">Medium
-		<input type="checkbox" checked="checked" id="techdebt-filter-medium">
-		<span class="checkmark"></span>
-	</label>
-	<label class="checkbox">Low
-		<input type="checkbox" checked="checked" id="techdebt-filter-low">
-		<span class="checkmark"></span>
-	</label>
+	<form>
+		<label for="techdebt-title">Title</label>
+		<input type="text" id="techdebt-title" name="techdebt-title" placeholder="Title of the technical debt">
+
+		<label for="techdebt-owner">Owner</label>
+		<input type="text" id="techdebt-owner" name="techdebt-owner" placeholder="Solution owner/responsible">
+
+		<label for="techdebt-priority">Priority</label>
+		<input type="text" id="techdebt-priority" name="techdebt-priority" placeholder="low/medium/high">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"low",
+					"medium",
+					"high"
+				];
+
+				$('#techdebt-priority').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-severity">Severity</label>
+		<input type="text" id="techdebt-severity" name="techdebt-severity"
+			placeholder="minor/normal/major/critical/blocker/warning/information/hint">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"minor",
+					"normal",
+					"major",
+					"critical",
+					"blocker",
+					"warning",
+					"information",
+					"hint"
+				];
+
+				$('#techdebt-severity').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-cost">Cost</label>
+		<input type="text" id="techdebt-cost" name="techdebt-cost" placeholder="low/medium/high">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"low",
+					"medium",
+					"high"
+				];
+
+				$('#techdebt-cost').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-effort">Effort</label>
+		<input type="text" id="techdebt-effort" name="techdebt-effort" placeholder="low/medium/high">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"low",
+					"medium",
+					"high"
+				];
+
+				$('#techdebt-effort').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-status">Status</label>
+		<input type="text" id="techdebt-status" name="techdebt-status" placeholder="new/in progress/closed/deferred">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"new",
+					"in progress",
+					"closed",
+					"deferred"
+				];
+
+				$('#techdebt-status').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-resolution">Resolution</label>
+		<input type="text" id="techdebt-resolution" name="techdebt-resolution"
+			placeholder="open/solved/invalid/duplicate">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"open",
+					"solved",
+					"invalid",
+					"duplicate"
+				];
+
+				$('#techdebt-resolution').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-type">Type</label>
+		<input type="text" id="techdebt-type" name="techdebt-type" placeholder="bug/debt/smell/style/todo/fixme">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"bug",
+					"vulnerability",
+					"debt",
+					"smell",
+					"style",
+					"todo",
+					"fixme"
+				];
+
+				$('#techdebt-type').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-workitem">Workitem</label>
+		<input type="text" id="techdebt-workitem" name="techdebt-workitem" placeholder="Ticket URL/Id">
+
+		<label for="techdebt-detectionPhase">Detection Phase</label>
+		<input type="text" id="techdebt-detectionPhase" name="techdebt-detectionPhase"
+			placeholder="When it was detected?">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"Requirements",
+					"Architecture",
+					"Detailed Design",
+					"Implementation",
+					"Integration",
+					"Unit Test",
+					"Integration Test",
+					"Qualification Test",
+					"Acceptance Test",
+					"Other"
+				];
+
+				$('#techdebt-detectionPhase').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-detectionMethod">Detection Method</label>
+		<input type="text" id="techdebt-detectionMethod" name="techdebt-detectionMethod"
+			placeholder="How it was detected?">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"Debugging",
+					"Review",
+					"Code Analysis",
+					"Unit Testing",
+					"Integration Testing",
+					"Regression Testing",
+					"Acceptance Testing",
+					"Profiling",
+					"Other"
+				];
+
+				$('#techdebt-detectionMethod').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-injectionPhase">Injection Phase</label>
+		<input type="text" id="techdebt-injectionPhase" name="techdebt-injectionPhase"
+			placeholder="When it was injected?">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"Requirements",
+					"Architecture",
+					"Detailed Design",
+					"Implementation",
+					"Integration",
+					"Unit Test",
+					"Integration Test",
+					"Qualification Test",
+					"Acceptance Test",
+					"Other"
+				];
+
+				$('#techdebt-injectionPhase').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-injectionQualifier">Injection Qualifier</label>
+		<input type="text" id="techdebt-injectionQualifier" name="techdebt-injectionQualifier"
+			placeholder="Why it was injected?">
+		<script>
+			$(document).ready(function () {
+				var options = [
+					"Misunderstood requirements",
+					"Misunderstood design",
+					"Lack of common practices",
+					"Lack of review",
+					"Lack of analysis",
+					"Lack of testing",
+					"Lack of communication",
+					"Inappropriate reuse",
+					"Complexity",
+					"Inexperience",
+					"Prototype",
+					"Deadline",
+					"Sloppiness",
+					"Other"
+				];
+
+				$('#techdebt-injectionQualifier').autocomplete({
+					source: options,
+					minLength: 0 // Vorschläge sofort anzeigen
+				}).focus(function () {
+					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
+					$(this).autocomplete("search");
+				});
+			});
+		</script>
+
+		<label for="techdebt-tags">Tags</label>
+		<input type="text" id="techdebt-tags" name="techdebt-tags" placeholder="root, arch, code, test, ...">
+	</form>
+
+
+	<div class="hidden">
+		<h3 class="separator">Filter:</h3>
+
+		<label class="checkbox">High
+			<input type="checkbox" checked="checked" id="techdebt-filter-high">
+			<span class="checkmark"></span>
+		</label>
+		<label class="checkbox">Medium
+			<input type="checkbox" checked="checked" id="techdebt-filter-medium">
+			<span class="checkmark"></span>
+		</label>
+		<label class="checkbox">Low
+			<input type="checkbox" checked="checked" id="techdebt-filter-low">
+			<span class="checkmark"></span>
+		</label>
+	</div>
 
 	<h3 class="separator">Technical Debts:</h3>
-	<table id="techdebt-table">
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Title</th>
-			</tr>
-		</thead>
+	<table id="techdebt-table" width="100%">
+		<thead></thead>
 		<tbody></tbody>
 	</table>
 

@@ -9,6 +9,8 @@ const yaml = require('js-yaml');
 
 import { TechDebtSidebar } from './webview/sidebar';
 
+import { Observable } from './patterns/observer';
+
 interface ITechDebtMetadata {
     id?: string;                 // Identifier of the technical debt
     title: string;               // Title of the technical debt
@@ -16,7 +18,7 @@ interface ITechDebtMetadata {
     date?: string;               // Date of the technical debt record
     owner?: string;              // Solution owner/Responsible
     status?: string;             // Such as new, in progress, closed, deferred
-    resolution?: string;         // Such as solved, invalid, duplicate
+    resolution?: string;         // Such as open, solved, invalid, duplicate
     type?: string;               // Type of technical debt record, e.g. Technical Debt, TODO, FIXME etc.
     severity?: string;           // Such as minor, normal, major, critical, blocker (+warning, information, hint)
 
@@ -53,6 +55,7 @@ class TechDebt {
         }
     };
 
+    private _tdrFile: vscode.Uri | undefined;
     private _discussion: any[] = [];
     private _votes: string[] = [];
 
@@ -194,6 +197,10 @@ class TechDebt {
         return this.resource.description || "";
     }
 
+    get tdrFile(): any {
+        return this._tdrFile;
+    }
+
     set id(id: string) {
         this.resource.metadata.id = id;
     }
@@ -308,6 +315,10 @@ class TechDebt {
 
     set discussion(discussion: string[]) {
         this._discussion = discussion;
+    }
+
+    set tdrFile(tdrFile: vscode.Uri) {
+        this._tdrFile = tdrFile;
     }
 
     public addComment(comment: string[]) {
@@ -442,10 +453,12 @@ class TechDebt {
     }
 }
 
-export class TechDebts {
-    private resources: { [id: string]: TechDebt; } = {};
+export class TechDebts extends Observable {
+    private _tdrs: { [id: string]: TechDebt; } = {};
 
     constructor(context: vscode.ExtensionContext) {
+
+        super();
 
         const sidebar = new TechDebtSidebar(context, this);
 
@@ -481,7 +494,40 @@ export class TechDebts {
             vscode.window.registerWebviewViewProvider("vscode-tdr-sidebar", sidebar)
         );
 
+        // Let sidebar observe TDRs
+        this.addObserver(sidebar);
+
         this.getTechDebtsInWorkspace();
+    }
+
+    private registerTechDebt(tdr: TechDebt) {
+        // Raise item in problem view
+        tdr.raiseProblem();
+
+        // Add to technical debt array
+        this._tdrs[tdr.id] = tdr;
+
+        if(tdr.tdrFile) {
+            // Register file watcher
+            const fileWatcher = vscode.workspace.createFileSystemWatcher(tdr.tdrFile.fsPath);
+            const tdrId = tdr.id;
+    
+            // Register a callback function for when the file is changed
+            fileWatcher.onDidChange(async (uri) => {
+                const td = await this.readTDR(uri);
+                if(td) {
+                    if(this._tdrs[tdrId]) {
+                        this._tdrs[tdrId] = td;
+                        this.notifyObservers(this._tdrs);
+                    }
+                }
+            });
+        } else {
+            console.error("Undefined TDR file!");
+        }
+
+        // Inform observers
+        this.notifyObservers(this._tdrs);
     }
 
     private async addTechDebt(uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
@@ -495,11 +541,15 @@ export class TechDebts {
             var tdFileName = title.replace(/\s+/g, '-');
             tdFileName = tdFileName.replace(/[^\w-]/gi, '') + ".tdr";
 
-            const tdFilePath = path.join(path.dirname(uri.fsPath), ".tdr", tdFileName);
-
             const td = new TechDebt();
             td.init(title);
             td.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
+
+            const tdFilePath = path.join(path.dirname(uri.fsPath), ".tdr", tdFileName);
+
+            // Set TDR URI
+            td.tdrFile = vscode.Uri.file(tdFilePath);
+
             if (startLine) {
                 td.startLine = startLine;
             }
@@ -512,9 +562,37 @@ export class TechDebts {
             if (endColumn) {
                 td.endColumn = endColumn;
             }
-            td.raiseProblem();
+
+            this.registerTechDebt(td);
+
             td.persist(tdFilePath);
         }
+    }
+
+    private readTDR(uri: vscode.Uri): Promise<TechDebt> {
+
+        const filePath = uri.fsPath;
+
+        return new Promise((resolve, reject) => {
+            // Read the contents of the file
+            fs.readFile(filePath, 'utf8', (err, data) => {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    // Parse the TDR data
+                    try {
+                        const td = new TechDebt();
+                        td.fromString(data);
+                        td.tdrFile = uri;
+                        resolve(td);
+                    } catch (err) {
+                        console.error(err);
+                        reject(err);
+                    }
+                }
+            });
+        });
     }
 
     private getTechDebtsInWorkspace() {
@@ -525,29 +603,11 @@ export class TechDebts {
 
             // Analyze each file
             files.then((uris) => {
-                uris.forEach(uri => {
-                    const filePath = uri.fsPath;
-                    const fileName = path.basename(filePath);
-
-                    // Read the contents of the file
-                    fs.readFile(filePath, 'utf8', (err, data) => {
-                        if (err) {
-                            console.error(err);
-                            return;
-                        }
-
-                        // Parse the TDR data
-                        try {
-                            const td = new TechDebt();
-                            td.fromString(data);
-                            td.raiseProblem();
-                            this.resources[td.id] = td;
-                            console.log(`Successfully parsed TDR from file: ${fileName}`);
-                        } catch (err) {
-                            console.error(`Error parsing TDR from file: ${fileName}`);
-                            console.error(err);
-                        }
-                    });
+                uris.forEach(async uri => {
+                    const td = await this.readTDR(uri);
+                    if(td) {
+                        this.registerTechDebt(td);
+                    }
                 });
             });
         } else {
@@ -556,7 +616,7 @@ export class TechDebts {
     }
 
     get techDebts(): { [id: string]: TechDebt; } {
-        return this.resources;
+        return this._tdrs;
     }
 }
 
