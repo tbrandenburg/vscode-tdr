@@ -1,11 +1,13 @@
 # vscode-tdr
 
-Visual Studio Code extension for documenting and managing technical debts.
+Visual Studio Code extension for documenting and managing technical doc records such as architecture decision records or technical debt records.
 
 ## Features
 
-* Add technical debts by technical debt records (TDR) for folders/files
+* Add technical doc records (TDR) for folders/files
+* Manage technical doc records based on meta-data
 * Display technical debts as issues in problem view
+* Display architecture decision as information in problem view
 
 ## Extension Settings
 

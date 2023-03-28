@@ -12,7 +12,7 @@
       "activitybar": [
         {
           "id": "vscode-tdr-sidebar-view",
-          "title": "Technical Debts",
+          "title": "Technical Doc Records",
           "icon": "resources/checklist.svg"
         }
       ]
@@ -22,22 +22,22 @@
         {
           "type": "webview",
           "id": "vscode-tdr-sidebar",
-          "name": "Technical Debts",
+          "name": "Technical Doc Records",
           "icon": "resources/checklist.svg",
-          "contextualTitle": "Technical Debts"
+          "contextualTitle": "Technical Doc Records"
         }
       ]
     },
     "commands": [
       {
         "command": "vscode-tdr.addExplorerTechDebt",
-        "category": "Technical Debts",
-        "title": "Add technical debt"
+        "category": "Technical Doc Records",
+        "title": "Add technical debt record"
       },
       {
         "command": "vscode-tdr.addEditorTechDebt",
-        "category": "Technical Debts",
-        "title": "Add technical debt here"
+        "category": "Technical Doc Records",
+        "title": "Add technical debt record here"
       }
     ],
     "languages": [
@@ -45,21 +45,21 @@
         "extensions": [
           ".tdr"
         ],
-        "id": "technical-debt-record"
+        "id": "technical-doc-record"
       }
     ],
     "menus": {
       "explorer/context": [
         {
           "command": "vscode-tdr.addExplorerTechDebt",
-          "group": "techdebt",
+          "group": "techdoc",
           "when": "explorerViewletVisible"
         }
       ],
       "editor/context": [
         {
           "command": "vscode-tdr.addEditorTechDebt",
-          "group": "techdebt",
+          "group": "techdoc",
           "when": "editorTextFocus"
         }        
       ]

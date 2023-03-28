@@ -7,28 +7,22 @@ import * as crypto from 'crypto';
 const fm = require('front-matter');
 const yaml = require('js-yaml');
 
-import { TechDebtSidebar } from './webview/sidebar';
+import { TechDocRecSidebar } from './webview/sidebar';
 
 import { Observable } from './patterns/observer';
 
-interface ITechDebtMetadata {
-    id?: string;                 // Identifier of the technical debt
-    title: string;               // Title of the technical debt
-    author?: string;             // Author of the technical debt record
-    date?: string;               // Date of the technical debt record
+interface ITechDocRecMetadata {
+    id?: string;                 // Identifier of the technical doc record
+    title: string;               // Title of the technical doc record
+    author?: string;             // Author of the technical doc record record
+    date?: string;               // Date of the technical doc record record
     owner?: string;              // Solution owner/Responsible
     status?: string;             // Such as new, in progress, closed, deferred
     resolution?: string;         // Such as open, solved, invalid, duplicate
-    type?: string;               // Type of technical debt record, e.g. Technical Debt, TODO, FIXME etc.
+    type?: string;               // Type of technical doc record record, e.g. Decision, Technical Debt, TODO, FIXME, INFO etc.
     severity?: string;           // Such as minor, normal, major, critical, blocker (+warning, information, hint)
-
-    /* Low:    <10%    it is rather unlikely this debt gets relevant in the project
-     * Medium: 10-50%  medium likelihood the debt gets relevant
-     * High:   >50%    it is very likely that this debt gets relevant in the project
-     */
-    priority?: string;
-
-    file?: string;               // Location of technical debt
+    priority?: string;           // Such as low, medium, high
+    file?: string;               // Location of technical doc record
     startLine?: number;
     startColumn?: number;
     endLine?: number;
@@ -43,13 +37,13 @@ interface ITechDebtMetadata {
     tags?: string[];
 }
 
-interface ITechDebt {
-    metadata: ITechDebtMetadata;
+interface ITechDocRec {
+    metadata: ITechDocRecMetadata;
     description?: string;
 }
 
-class TechDebt {
-    public resource: ITechDebt = {
+class TechDocRec {
+    public resource: ITechDocRec = {
         metadata: {
             title: ""
         }
@@ -63,34 +57,34 @@ class TechDebt {
         this.init();
     }
 
-    get metadata(): ITechDebtMetadata {
+    get metadata(): ITechDocRecMetadata {
         return this.resource.metadata;
     }
 
-    set metadata(techDebt: ITechDebtMetadata) {
-        this.title = techDebt.title;
-        if (techDebt.file) { this.file = techDebt.file; };
-        if (techDebt.id) { this.id = techDebt.id; };
-        if (techDebt.author) { this.author = techDebt.author; };
-        if (techDebt.date) { this.date = techDebt.date; };
-        if (techDebt.owner) { this.owner = techDebt.owner; };
-        if (techDebt.status) { this.status = techDebt.status; };
-        if (techDebt.resolution) { this.resolution = techDebt.resolution; };
-        if (techDebt.type) { this.type = techDebt.type; };
-        if (techDebt.severity) { this.severity = techDebt.severity; };
-        if (techDebt.priority) { this.priority = techDebt.priority; };
-        if (techDebt.startLine) { this.startLine = techDebt.startLine; };
-        if (techDebt.startColumn) { this.startColumn = techDebt.startColumn; };
-        if (techDebt.endLine) { this.endLine = techDebt.endLine; };
-        if (techDebt.endColumn) { this.endColumn = techDebt.endColumn; };
-        if (techDebt.workitem) { this.workitem = techDebt.workitem; };
-        if (techDebt.cost) { this.cost = techDebt.cost; };
-        if (techDebt.effort) { this.effort = techDebt.effort; };
-        if (techDebt.detectionPhase) { this.detectionPhase = techDebt.detectionPhase; };
-        if (techDebt.detectionMethod) { this.detectionMethod = techDebt.detectionMethod; };
-        if (techDebt.injectionPhase) { this.injectionPhase = techDebt.injectionPhase; };
-        if (techDebt.injectionQualifier) { this.injectionQualifier = techDebt.injectionQualifier; };
-        if (techDebt.tags) { this.tags = techDebt.tags; };
+    set metadata(techDocRec: ITechDocRecMetadata) {
+        this.title = techDocRec.title;
+        if (techDocRec.file) { this.file = techDocRec.file; };
+        if (techDocRec.id) { this.id = techDocRec.id; };
+        if (techDocRec.author) { this.author = techDocRec.author; };
+        if (techDocRec.date) { this.date = techDocRec.date; };
+        if (techDocRec.owner) { this.owner = techDocRec.owner; };
+        if (techDocRec.status) { this.status = techDocRec.status; };
+        if (techDocRec.resolution) { this.resolution = techDocRec.resolution; };
+        if (techDocRec.type) { this.type = techDocRec.type; };
+        if (techDocRec.severity) { this.severity = techDocRec.severity; };
+        if (techDocRec.priority) { this.priority = techDocRec.priority; };
+        if (techDocRec.startLine) { this.startLine = techDocRec.startLine; };
+        if (techDocRec.startColumn) { this.startColumn = techDocRec.startColumn; };
+        if (techDocRec.endLine) { this.endLine = techDocRec.endLine; };
+        if (techDocRec.endColumn) { this.endColumn = techDocRec.endColumn; };
+        if (techDocRec.workitem) { this.workitem = techDocRec.workitem; };
+        if (techDocRec.cost) { this.cost = techDocRec.cost; };
+        if (techDocRec.effort) { this.effort = techDocRec.effort; };
+        if (techDocRec.detectionPhase) { this.detectionPhase = techDocRec.detectionPhase; };
+        if (techDocRec.detectionMethod) { this.detectionMethod = techDocRec.detectionMethod; };
+        if (techDocRec.injectionPhase) { this.injectionPhase = techDocRec.injectionPhase; };
+        if (techDocRec.injectionQualifier) { this.injectionQualifier = techDocRec.injectionQualifier; };
+        if (techDocRec.tags) { this.tags = techDocRec.tags; };
     }
 
     get id(): string {
@@ -348,7 +342,7 @@ class TechDebt {
                 this.title
             );
 
-            diagnostic.source = this.type || "Technical Debt";
+            diagnostic.source = this.type || "Technical Doc Record";
 
             switch (this.severity) {
                 case "error":
@@ -387,7 +381,7 @@ class TechDebt {
         if (diagnostic) {
             if (vscode.workspace.workspaceFolders !== undefined) {
                 const uri = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, this.file));
-                const diagnostics = vscode.languages.createDiagnosticCollection('TechDebts');
+                const diagnostics = vscode.languages.createDiagnosticCollection('TechDocRecs');
                 diagnostics.set(uri, [diagnostic]);
             }
         }
@@ -453,22 +447,22 @@ class TechDebt {
     }
 }
 
-export class TechDebts extends Observable {
-    private _tdrs: { [id: string]: TechDebt; } = {};
+export class TechDocRecs extends Observable {
+    private _tdrs: { [id: string]: TechDocRec; } = {};
 
     constructor(context: vscode.ExtensionContext) {
 
         super();
 
-        const sidebar = new TechDebtSidebar(context, this);
+        const sidebar = new TechDocRecSidebar(context, this);
 
         // Register Listener for onDidChangeWorkspaceFolders event
         vscode.workspace.onDidChangeWorkspaceFolders(event => {
-            this.getTechDebtsInWorkspace();
+            this.getTechDocRecsInWorkspace();
         });
 
         context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addExplorerTechDebt', async (selectedResourceUri: vscode.Uri) => {
-            this.addTechDebt(selectedResourceUri);
+            this.addExplorerTechDebt(selectedResourceUri);
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addEditorTechDebt', async (selectedResourceUri: vscode.Uri) => {
@@ -479,9 +473,9 @@ export class TechDebts extends Observable {
             let selection = editor.selection;
             if (selection.isEmpty) {
                 let cursorPosition = editor.selection.active;
-                this.addTechDebt(selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
+                this.addExplorerTechDebt(selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
             } else {
-                this.addTechDebt(selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+                this.addExplorerTechDebt(selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
             }
         }));
 
@@ -497,14 +491,14 @@ export class TechDebts extends Observable {
         // Let sidebar observe TDRs
         this.addObserver(sidebar);
 
-        this.getTechDebtsInWorkspace();
+        this.getTechDocRecsInWorkspace();
     }
 
-    private registerTechDebt(tdr: TechDebt) {
+    private registerTechDocRec(tdr: TechDocRec) {
         // Raise item in problem view
         tdr.raiseProblem();
 
-        // Add to technical debt array
+        // Add to technical doc record array
         this._tdrs[tdr.id] = tdr;
 
         if(tdr.tdrFile) {
@@ -530,7 +524,7 @@ export class TechDebts extends Observable {
         this.notifyObservers(this._tdrs);
     }
 
-    private async addTechDebt(uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
+    private async addExplorerTechDebt(uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
 
         var title = await vscode.window.showInputBox({
             prompt: 'Enter a title for the technical debt:',
@@ -541,7 +535,7 @@ export class TechDebts extends Observable {
             var tdFileName = title.replace(/\s+/g, '-');
             tdFileName = tdFileName.replace(/[^\w-]/gi, '') + ".tdr";
 
-            const td = new TechDebt();
+            const td = new TechDocRec();
             td.init(title);
             td.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
 
@@ -563,13 +557,13 @@ export class TechDebts extends Observable {
                 td.endColumn = endColumn;
             }
 
-            this.registerTechDebt(td);
+            this.registerTechDocRec(td);
 
             td.persist(tdFilePath);
         }
     }
 
-    private readTDR(uri: vscode.Uri): Promise<TechDebt> {
+    private readTDR(uri: vscode.Uri): Promise<TechDocRec> {
 
         const filePath = uri.fsPath;
 
@@ -582,7 +576,7 @@ export class TechDebts extends Observable {
                 } else {
                     // Parse the TDR data
                     try {
-                        const td = new TechDebt();
+                        const td = new TechDocRec();
                         td.fromString(data);
                         td.tdrFile = uri;
                         resolve(td);
@@ -595,7 +589,7 @@ export class TechDebts extends Observable {
         });
     }
 
-    private getTechDebtsInWorkspace() {
+    private getTechDocRecsInWorkspace() {
 
         if (vscode.workspace.workspaceFolders !== undefined) {
             // Use the workspace root path to find all TDR files
@@ -606,7 +600,7 @@ export class TechDebts extends Observable {
                 uris.forEach(async uri => {
                     const td = await this.readTDR(uri);
                     if(td) {
-                        this.registerTechDebt(td);
+                        this.registerTechDocRec(td);
                     }
                 });
             });
@@ -615,7 +609,7 @@ export class TechDebts extends Observable {
         }
     }
 
-    get techDebts(): { [id: string]: TechDebt; } {
+    get techDocRecs(): { [id: string]: TechDocRec; } {
         return this._tdrs;
     }
 }

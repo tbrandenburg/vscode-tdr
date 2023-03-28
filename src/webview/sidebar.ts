@@ -2,23 +2,23 @@ import * as vscode from 'vscode';
 import * as utils from './utils';
 import * as path from 'path';
 
-import { TechDebts } from '../techdebt';
+import { TechDocRecs } from '../techdocrec';
 import { Observer } from '../patterns/observer';
 
 /**
  * Webview content provider for sidebar.
  * @implements {vscode.WebviewViewProvider}
  */
-export class TechDebtSidebar implements vscode.WebviewViewProvider, Observer {
+export class TechDocRecSidebar implements vscode.WebviewViewProvider, Observer {
 
   private webviewView?: vscode.WebviewView;
 
   /**
    * Constructor of the class.
    * @param {vscode.ExtensionContext}
-   * @param {TechDebts}
+   * @param {TechDocRecs}
    */
-  constructor(private context: vscode.ExtensionContext, private tdrs: TechDebts) { }
+  constructor(private context: vscode.ExtensionContext, private tdrs: TechDocRecs) { }
 
   /**
    * More like initialization of the webview (when sidebar is opened initially)
@@ -54,7 +54,7 @@ export class TechDebtSidebar implements vscode.WebviewViewProvider, Observer {
       switch (data.type) {
         case 'update': {
           if (this.webviewView) {
-            this.webviewView.webview.postMessage({ type: 'tdrs', data: this.tdrs.techDebts });
+            this.webviewView.webview.postMessage({ type: 'tdrs', data: this.tdrs.techDocRecs });
           }
           break;
         }
@@ -72,7 +72,7 @@ export class TechDebtSidebar implements vscode.WebviewViewProvider, Observer {
           if (data.message) {
             if(vscode.workspace.workspaceFolders !== undefined) {
 
-              const tdrFile = this.tdrs.techDebts[data.message].tdrFile;
+              const tdrFile = this.tdrs.techDocRecs[data.message].tdrFile;
 
               if(tdrFile) {
                 // Open editor and markdown
@@ -83,7 +83,7 @@ export class TechDebtSidebar implements vscode.WebviewViewProvider, Observer {
                   vscode.commands.executeCommand('markdown.showPreviewToSide');
                 });
               } else {
-                vscode.window.showErrorMessage("No technical debt record found!");
+                vscode.window.showErrorMessage("No technical doc record found!");
               }
             }
           }
@@ -105,7 +105,7 @@ export class TechDebtSidebar implements vscode.WebviewViewProvider, Observer {
       }
     });
 
-    this.webviewView.webview.postMessage({ type: 'tdrs', data: this.tdrs.techDebts });
+    this.webviewView.webview.postMessage({ type: 'tdrs', data: this.tdrs.techDocRecs });
   }
 
   public update(data: any) {

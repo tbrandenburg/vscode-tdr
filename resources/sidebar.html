@@ -19,14 +19,14 @@
 	<h3 class="separator">Properties:</h3>
 
 	<form>
-		<label for="techdebt-title">Title</label>
-		<input type="text" id="techdebt-title" name="techdebt-title" placeholder="Title of the technical debt">
+		<label for="techdocrec-title">Title</label>
+		<input type="text" id="techdocrec-title" name="techdocrec-title" placeholder="Title of the technical doc record">
 
-		<label for="techdebt-owner">Owner</label>
-		<input type="text" id="techdebt-owner" name="techdebt-owner" placeholder="Solution owner/responsible">
+		<label for="techdocrec-owner">Owner</label>
+		<input type="text" id="techdocrec-owner" name="techdocrec-owner" placeholder="Solution owner/responsible">
 
-		<label for="techdebt-priority">Priority</label>
-		<input type="text" id="techdebt-priority" name="techdebt-priority" placeholder="low/medium/high">
+		<label for="techdocrec-priority">Priority</label>
+		<input type="text" id="techdocrec-priority" name="techdocrec-priority" placeholder="low/medium/high">
 		<script>
 			$(document).ready(function () {
 				var options = [
@@ -35,7 +35,7 @@
 					"high"
 				];
 
-				$('#techdebt-priority').autocomplete({
+				$('#techdocrec-priority').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -45,8 +45,8 @@
 			});
 		</script>
 
-		<label for="techdebt-severity">Severity</label>
-		<input type="text" id="techdebt-severity" name="techdebt-severity"
+		<label for="techdocrec-severity">Severity</label>
+		<input type="text" id="techdocrec-severity" name="techdocrec-severity"
 			placeholder="minor/normal/major/critical/blocker/warning/information/hint">
 		<script>
 			$(document).ready(function () {
@@ -61,7 +61,7 @@
 					"hint"
 				];
 
-				$('#techdebt-severity').autocomplete({
+				$('#techdocrec-severity').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -71,8 +71,8 @@
 			});
 		</script>
 
-		<label for="techdebt-cost">Cost</label>
-		<input type="text" id="techdebt-cost" name="techdebt-cost" placeholder="low/medium/high">
+		<label for="techdocrec-cost">Cost</label>
+		<input type="text" id="techdocrec-cost" name="techdocrec-cost" placeholder="low/medium/high">
 		<script>
 			$(document).ready(function () {
 				var options = [
@@ -81,7 +81,7 @@
 					"high"
 				];
 
-				$('#techdebt-cost').autocomplete({
+				$('#techdocrec-cost').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -91,8 +91,8 @@
 			});
 		</script>
 
-		<label for="techdebt-effort">Effort</label>
-		<input type="text" id="techdebt-effort" name="techdebt-effort" placeholder="low/medium/high">
+		<label for="techdocrec-effort">Effort</label>
+		<input type="text" id="techdocrec-effort" name="techdocrec-effort" placeholder="low/medium/high">
 		<script>
 			$(document).ready(function () {
 				var options = [
@@ -101,7 +101,7 @@
 					"high"
 				];
 
-				$('#techdebt-effort').autocomplete({
+				$('#techdocrec-effort').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -111,8 +111,8 @@
 			});
 		</script>
 
-		<label for="techdebt-status">Status</label>
-		<input type="text" id="techdebt-status" name="techdebt-status" placeholder="new/in progress/closed/deferred">
+		<label for="techdocrec-status">Status</label>
+		<input type="text" id="techdocrec-status" name="techdocrec-status" placeholder="new/in progress/closed/deferred">
 		<script>
 			$(document).ready(function () {
 				var options = [
@@ -122,7 +122,7 @@
 					"deferred"
 				];
 
-				$('#techdebt-status').autocomplete({
+				$('#techdocrec-status').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -132,8 +132,8 @@
 			});
 		</script>
 
-		<label for="techdebt-resolution">Resolution</label>
-		<input type="text" id="techdebt-resolution" name="techdebt-resolution"
+		<label for="techdocrec-resolution">Resolution</label>
+		<input type="text" id="techdocrec-resolution" name="techdocrec-resolution"
 			placeholder="open/solved/invalid/duplicate">
 		<script>
 			$(document).ready(function () {
@@ -144,7 +144,7 @@
 					"duplicate"
 				];
 
-				$('#techdebt-resolution').autocomplete({
+				$('#techdocrec-resolution').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -154,21 +154,23 @@
 			});
 		</script>
 
-		<label for="techdebt-type">Type</label>
-		<input type="text" id="techdebt-type" name="techdebt-type" placeholder="bug/debt/smell/style/todo/fixme">
+		<label for="techdocrec-type">Type</label>
+		<input type="text" id="techdocrec-type" name="techdocrec-type" placeholder="debt/bug/vulnerability/smell/style/todo/fixme/info/decision">
 		<script>
 			$(document).ready(function () {
 				var options = [
+                    "debt",
 					"bug",
 					"vulnerability",
-					"debt",
 					"smell",
 					"style",
 					"todo",
-					"fixme"
+					"fixme",
+                    "info",
+                    "decision"
 				];
 
-				$('#techdebt-type').autocomplete({
+				$('#techdocrec-type').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -178,11 +180,11 @@
 			});
 		</script>
 
-		<label for="techdebt-workitem">Workitem</label>
-		<input type="text" id="techdebt-workitem" name="techdebt-workitem" placeholder="Ticket URL/Id">
+		<label for="techdocrec-workitem">Workitem</label>
+		<input type="text" id="techdocrec-workitem" name="techdocrec-workitem" placeholder="Ticket URL/Id">
 
-		<label for="techdebt-detectionPhase">Detection Phase</label>
-		<input type="text" id="techdebt-detectionPhase" name="techdebt-detectionPhase"
+		<label for="techdocrec-detectionPhase">Detection Phase</label>
+		<input type="text" id="techdocrec-detectionPhase" name="techdocrec-detectionPhase"
 			placeholder="When it was detected?">
 		<script>
 			$(document).ready(function () {
@@ -199,7 +201,7 @@
 					"Other"
 				];
 
-				$('#techdebt-detectionPhase').autocomplete({
+				$('#techdocrec-detectionPhase').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -209,8 +211,8 @@
 			});
 		</script>
 
-		<label for="techdebt-detectionMethod">Detection Method</label>
-		<input type="text" id="techdebt-detectionMethod" name="techdebt-detectionMethod"
+		<label for="techdocrec-detectionMethod">Detection Method</label>
+		<input type="text" id="techdocrec-detectionMethod" name="techdocrec-detectionMethod"
 			placeholder="How it was detected?">
 		<script>
 			$(document).ready(function () {
@@ -226,7 +228,7 @@
 					"Other"
 				];
 
-				$('#techdebt-detectionMethod').autocomplete({
+				$('#techdocrec-detectionMethod').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -236,8 +238,8 @@
 			});
 		</script>
 
-		<label for="techdebt-injectionPhase">Injection Phase</label>
-		<input type="text" id="techdebt-injectionPhase" name="techdebt-injectionPhase"
+		<label for="techdocrec-injectionPhase">Injection Phase</label>
+		<input type="text" id="techdocrec-injectionPhase" name="techdocrec-injectionPhase"
 			placeholder="When it was injected?">
 		<script>
 			$(document).ready(function () {
@@ -254,7 +256,7 @@
 					"Other"
 				];
 
-				$('#techdebt-injectionPhase').autocomplete({
+				$('#techdocrec-injectionPhase').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -264,8 +266,8 @@
 			});
 		</script>
 
-		<label for="techdebt-injectionQualifier">Injection Qualifier</label>
-		<input type="text" id="techdebt-injectionQualifier" name="techdebt-injectionQualifier"
+		<label for="techdocrec-injectionQualifier">Injection Qualifier</label>
+		<input type="text" id="techdocrec-injectionQualifier" name="techdocrec-injectionQualifier"
 			placeholder="Why it was injected?">
 		<script>
 			$(document).ready(function () {
@@ -286,7 +288,7 @@
 					"Other"
 				];
 
-				$('#techdebt-injectionQualifier').autocomplete({
+				$('#techdocrec-injectionQualifier').autocomplete({
 					source: options,
 					minLength: 0 // Vorschläge sofort anzeigen
 				}).focus(function () {
@@ -296,8 +298,8 @@
 			});
 		</script>
 
-		<label for="techdebt-tags">Tags</label>
-		<input type="text" id="techdebt-tags" name="techdebt-tags" placeholder="root, arch, code, test, ...">
+		<label for="techdocrec-tags">Tags</label>
+		<input type="text" id="techdocrec-tags" name="techdocrec-tags" placeholder="root, arch, code, test, ...">
 	</form>
 
 
@@ -305,21 +307,21 @@
 		<h3 class="separator">Filter:</h3>
 
 		<label class="checkbox">High
-			<input type="checkbox" checked="checked" id="techdebt-filter-high">
+			<input type="checkbox" checked="checked" id="techdocrec-filter-high">
 			<span class="checkmark"></span>
 		</label>
 		<label class="checkbox">Medium
-			<input type="checkbox" checked="checked" id="techdebt-filter-medium">
+			<input type="checkbox" checked="checked" id="techdocrec-filter-medium">
 			<span class="checkmark"></span>
 		</label>
 		<label class="checkbox">Low
-			<input type="checkbox" checked="checked" id="techdebt-filter-low">
+			<input type="checkbox" checked="checked" id="techdocrec-filter-low">
 			<span class="checkmark"></span>
 		</label>
 	</div>
 
-	<h3 class="separator">Technical Debts:</h3>
-	<table id="techdebt-table" width="100%">
+	<h3 class="separator">Technical Doc Records:</h3>
+	<table id="techdocrec-table" width="100%">
 		<thead></thead>
 		<tbody></tbody>
 	</table>

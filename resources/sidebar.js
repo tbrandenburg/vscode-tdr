@@ -6,9 +6,9 @@
 const tsVscode = acquireVsCodeApi();
 
 // Create reference to existing html elements
-var techDebtFilterHigh = document.getElementById('techdebt-filter-high'),
-  techDebtFilterMedium = document.getElementById('techdebt-filter-medium'),
-  techDebtFilterLow = document.getElementById('techdebt-filter-low');
+var techDebtFilterHigh = document.getElementById('techdocrec-filter-high'),
+  techDebtFilterMedium = document.getElementById('techdocrec-filter-medium'),
+  techDebtFilterLow = document.getElementById('techdocrec-filter-low');
 
 // Add listener to checkboxes to trigger update
 techDebtFilterHigh.addEventListener('change', update);
@@ -49,7 +49,7 @@ function update() {
 }
 
 function updateInput(attribute, value) {
-  var input = $("input[id='techdebt-" + attribute + "']");
+  var input = $("input[id='techdocrec-" + attribute + "']");
   if(input) {
     input.val(value);
   }
@@ -57,7 +57,7 @@ function updateInput(attribute, value) {
 
 function addChangeListener(attribute) {
   $(document).ready(function() {
-    $("input[id='techdebt-" + attribute + "']").change(function() {
+    $("input[id='techdocrec-" + attribute + "']").change(function() {
       if(lastTDRs && curTdrId) {
         // Do something when the input value changes
         var inputValue = $(this).val();
@@ -118,7 +118,7 @@ window.addEventListener('message', event => {
     case 'init':
       break;
     case 'tdrs':
-      const tableBody = document.querySelector('#techdebt-table tbody');
+      const tableBody = document.querySelector('#techdocrec-table tbody');
       lastTDRs = event.data.data;
 
       // Initially reset content
