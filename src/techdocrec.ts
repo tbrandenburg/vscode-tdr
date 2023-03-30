@@ -11,6 +11,10 @@ import { TechDocRecSidebar } from './webview/sidebar';
 
 import { Observable } from './patterns/observer';
 
+interface ITechDocRecMetadataExt extends ITechDocRecMetadata {
+    [key: string]: any;
+}
+
 interface ITechDocRecMetadata {
     id?: string;                 // Identifier of the technical doc record
     title: string;               // Title of the technical doc record
@@ -20,25 +24,26 @@ interface ITechDocRecMetadata {
     status?: string;             // Such as new, in progress, closed, deferred
     resolution?: string;         // Such as open, solved, invalid, duplicate
     type?: string;               // Type of technical doc record record, e.g. Decision, Technical Debt, TODO, FIXME, INFO etc.
-    severity?: string;           // Such as minor, normal, major, critical, blocker (+warning, information, hint)
+    severity?: string;           // Such as minor, normal, major, critical, blocker (+warning, information)
     priority?: string;           // Such as low, medium, high
     file?: string;               // Location of technical doc record
     startLine?: number;
     startColumn?: number;
     endLine?: number;
     endColumn?: number;
-    workitem?: string[];         // Ticket URL/Id
+    workitem?: string;           // Ticket URL/Id
     cost?: string;               // Such as low, medium, high
     effort?: string;             // Such as low, medium, high
     detectionPhase?: string;     // When it was detected?
     detectionMethod?: string;    // How it was detected?
     injectionPhase?: string;     // When it was injected/created?
     injectionQualifier?: string; // Why it was injected/created?
-    tags?: string[];
+    tags?: string;               // Tags for filtering
+    requirements?: string;       // Satisfied requirements
 }
 
 interface ITechDocRec {
-    metadata: ITechDocRecMetadata;
+    metadata: ITechDocRecMetadataExt;
     description?: string;
 }
 
@@ -57,34 +62,12 @@ class TechDocRec {
         this.init();
     }
 
-    get metadata(): ITechDocRecMetadata {
+    get metadata(): ITechDocRecMetadataExt {
         return this.resource.metadata;
     }
 
-    set metadata(techDocRec: ITechDocRecMetadata) {
-        this.title = techDocRec.title;
-        if (techDocRec.file) { this.file = techDocRec.file; };
-        if (techDocRec.id) { this.id = techDocRec.id; };
-        if (techDocRec.author) { this.author = techDocRec.author; };
-        if (techDocRec.date) { this.date = techDocRec.date; };
-        if (techDocRec.owner) { this.owner = techDocRec.owner; };
-        if (techDocRec.status) { this.status = techDocRec.status; };
-        if (techDocRec.resolution) { this.resolution = techDocRec.resolution; };
-        if (techDocRec.type) { this.type = techDocRec.type; };
-        if (techDocRec.severity) { this.severity = techDocRec.severity; };
-        if (techDocRec.priority) { this.priority = techDocRec.priority; };
-        if (techDocRec.startLine) { this.startLine = techDocRec.startLine; };
-        if (techDocRec.startColumn) { this.startColumn = techDocRec.startColumn; };
-        if (techDocRec.endLine) { this.endLine = techDocRec.endLine; };
-        if (techDocRec.endColumn) { this.endColumn = techDocRec.endColumn; };
-        if (techDocRec.workitem) { this.workitem = techDocRec.workitem; };
-        if (techDocRec.cost) { this.cost = techDocRec.cost; };
-        if (techDocRec.effort) { this.effort = techDocRec.effort; };
-        if (techDocRec.detectionPhase) { this.detectionPhase = techDocRec.detectionPhase; };
-        if (techDocRec.detectionMethod) { this.detectionMethod = techDocRec.detectionMethod; };
-        if (techDocRec.injectionPhase) { this.injectionPhase = techDocRec.injectionPhase; };
-        if (techDocRec.injectionQualifier) { this.injectionQualifier = techDocRec.injectionQualifier; };
-        if (techDocRec.tags) { this.tags = techDocRec.tags; };
+    set metadata(techDocRec: ITechDocRecMetadataExt) {
+        this.resource.metadata = techDocRec;
     }
 
     get id(): string {
@@ -147,44 +130,12 @@ class TechDocRec {
         return this.resource.metadata.endColumn || 0;
     }
 
-    get workitem(): string[] {
-        return this.resource.metadata.workitem || [];
-    }
-
-    get cost(): string {
-        return this.resource.metadata.cost || "";
-    }
-
-    get effort(): string {
-        return this.resource.metadata.effort || "";
-    }
-
-    get detectionPhase(): string {
-        return this.resource.metadata.detectionPhase || "";
-    }
-
-    get detectionMethod(): string {
-        return this.resource.metadata.detectionMethod || "";
-    }
-
-    get injectionPhase(): string {
-        return this.resource.metadata.injectionPhase || "";
-    }
-
-    get injectionQualifier(): string {
-        return this.resource.metadata.injectionQualifier || "";
-    }
-
     get votes(): string[] {
         return this._votes || [];
     }
 
     get discussion(): any[] {
         return this._discussion || [];
-    }
-
-    get tags(): any {
-        return this.resource.metadata.tags || [];
     }
 
     get description(): string {
@@ -255,42 +206,6 @@ class TechDocRec {
         this.resource.metadata.endColumn = column;
     }
 
-    set workitem(workitems: string[]) {
-        this.resource.metadata.workitem = workitems;
-    }
-
-    public addWorkItem(workitem: string) {
-        if (this.resource.metadata.workitem) {
-            this.resource.metadata.workitem.push(workitem);
-        } else {
-            this.resource.metadata.workitem = [workitem];
-        }
-    }
-
-    set cost(cost: string) {
-        this.resource.metadata.cost = cost;
-    }
-
-    set effort(effort: string) {
-        this.resource.metadata.effort = effort;
-    }
-
-    set detectionPhase(detectionPhase: string) {
-        this.resource.metadata.detectionPhase = detectionPhase;
-    }
-
-    set detectionMethod(detectionMethod: string) {
-        this.resource.metadata.detectionMethod = detectionMethod;
-    }
-
-    set injectionPhase(injectionPhase: string) {
-        this.resource.metadata.injectionPhase = injectionPhase;
-    }
-
-    set injectionQualifier(injectionQualifier: string) {
-        this.resource.metadata.injectionQualifier = injectionQualifier;
-    }
-
     set votes(votes: string[]) {
         this._votes = votes;
     }
@@ -323,18 +238,6 @@ class TechDocRec {
         }
     }
 
-    set tags(tags: string[]) {
-        this.resource.metadata.tags = tags;
-    }
-
-    public addTag(tag: string) {
-        if (this.resource.metadata.tags) {
-            this.resource.metadata.tags.push(tag);
-        } else {
-            this.resource.metadata.tags = [tag];
-        }
-    }
-
     private getDiagnostic(): any {
         if (vscode.workspace.workspaceFolders !== undefined) {
             const diagnostic = new vscode.Diagnostic(
@@ -363,16 +266,50 @@ class TechDocRec {
                 case "information":
                     diagnostic.severity = vscode.DiagnosticSeverity.Information;
                     break;
-                case "hint":
-                    diagnostic.severity = vscode.DiagnosticSeverity.Hint;
-                    break;
                 default:
-                    diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                    switch (this.type) {
+                        case "debt":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                            break;
+                        case "bug":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                            break;
+                        case "vulnerability":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                            break;
+                        case "smell":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                            break;
+                        case "style":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                            break;
+                        case "todo":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                            break;
+                        case "fixme":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                            break;
+                        case "info":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                            break;
+                        case "decision":
+                            diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                            break;
+                        default:
+                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                            break;
+                    }
                     break;
             }
             return diagnostic;
         } else {
             return undefined;
+        }
+    }
+
+    public setAttribute(attribute: string, value: any) {
+        if (value) {
+            this.resource.metadata[attribute] = value;
         }
     }
 
@@ -403,7 +340,7 @@ class TechDocRec {
         this.description = parsedData.body;
     }
 
-    public init(title?: string) {
+    public init(title?: string, type?: string) {
         const currentDate = new Date();
 
         const day = currentDate.getDate().toString().padStart(2, "0");
@@ -424,31 +361,34 @@ class TechDocRec {
         this.description += "## Impedes" + os.EOL + os.EOL;          // What happens if we don't fix it?
         this.description += "## Costs" + os.EOL + os.EOL;            // What does it means in terms of costs if we don't fix it?
         this.description += "## Effort to fix" + os.EOL + os.EOL;    // How much will it cost to resolve?
-        this.description += "## Solution(s)" + os.EOL + os.EOL;
+        this.description += "## Options" + os.EOL + os.EOL;
         this.description += "## Decision" + os.EOL + os.EOL;
     }
 
-    public persist(tdrPath: string): boolean {
-        fs.mkdir(path.dirname(tdrPath), { recursive: true }, (err) => {
-            if (err) {
-                vscode.window.showErrorMessage("Error creating directory: " + path.dirname(tdrPath));
-                return false;
-            }
-
-            fs.writeFile(tdrPath, this.toString(), (err) => {
+    public async persist() {
+        if (this.tdrFile) {
+            const tdrPath = this.tdrFile.fsPath;
+            fs.mkdir(path.dirname(tdrPath), { recursive: true }, (err) => {
                 if (err) {
-                    vscode.window.showErrorMessage("Error creating file: " + tdrPath);
-                    return false;
+                    vscode.window.showErrorMessage("Error creating directory: " + path.dirname(tdrPath));
                 }
-                vscode.window.showInformationMessage("Sucessfully created " + tdrPath + "!");
+
+                fs.writeFile(tdrPath, this.toString(), (err) => {
+                    if (err) {
+                        vscode.window.showErrorMessage("Error creating file: " + tdrPath);
+                    }
+                });
             });
-        });
-        return true;
+        }
     }
 }
 
 export class TechDocRecs extends Observable {
     private _tdrs: { [id: string]: TechDocRec; } = {};
+
+    get techDocRecs(): { [id: string]: TechDocRec; } {
+        return this._tdrs;
+    }
 
     constructor(context: vscode.ExtensionContext) {
 
@@ -461,8 +401,12 @@ export class TechDocRecs extends Observable {
             this.getTechDocRecsInWorkspace();
         });
 
+        context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addExplorerADR', async (selectedResourceUri: vscode.Uri) => {
+            this.createTDR("decision", selectedResourceUri);
+        }));
+
         context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addExplorerTechDebt', async (selectedResourceUri: vscode.Uri) => {
-            this.addExplorerTechDebt(selectedResourceUri);
+            this.createTDR("debt", selectedResourceUri);
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addEditorTechDebt', async (selectedResourceUri: vscode.Uri) => {
@@ -473,9 +417,9 @@ export class TechDocRecs extends Observable {
             let selection = editor.selection;
             if (selection.isEmpty) {
                 let cursorPosition = editor.selection.active;
-                this.addExplorerTechDebt(selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
+                this.createTDR("debt", selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
             } else {
-                this.addExplorerTechDebt(selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+                this.createTDR("debt", selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
             }
         }));
 
@@ -494,6 +438,48 @@ export class TechDocRecs extends Observable {
         this.getTechDocRecsInWorkspace();
     }
 
+    // Creates a new technical doc record and therewith registers and persists the same
+    private async createTDR(type: string, uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
+
+        var title = await vscode.window.showInputBox({
+            prompt: 'Enter a title for the architecture decision:',
+            placeHolder: path.basename(uri.fsPath),
+        });
+
+        if (title && (vscode.workspace.workspaceFolders !== undefined)) {
+            var tdFileName = title.replace(/\s+/g, '-');
+            tdFileName = tdFileName.replace(/[^\w-]/gi, '') + ".tdr";
+
+            const adr = new TechDocRec();
+            adr.init(title);
+            adr.type = type;
+            adr.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
+
+            const tdFilePath = path.join(path.dirname(uri.fsPath), ".tdr", tdFileName);
+
+            // Set TDR URI
+            adr.tdrFile = vscode.Uri.file(tdFilePath);
+
+            if (startLine) {
+                adr.startLine = startLine;
+            }
+            if (startColumn) {
+                adr.startColumn = startColumn;
+            }
+            if (endLine) {
+                adr.endLine = endLine;
+            }
+            if (endColumn) {
+                adr.endColumn = endColumn;
+            }
+
+            this.registerTechDocRec(adr);
+
+            adr.persist();
+        }
+    }
+
+    // Publish technical doc record to UI
     private registerTechDocRec(tdr: TechDocRec) {
         // Raise item in problem view
         tdr.raiseProblem();
@@ -501,16 +487,16 @@ export class TechDocRecs extends Observable {
         // Add to technical doc record array
         this._tdrs[tdr.id] = tdr;
 
-        if(tdr.tdrFile) {
+        if (tdr.tdrFile) {
             // Register file watcher
             const fileWatcher = vscode.workspace.createFileSystemWatcher(tdr.tdrFile.fsPath);
             const tdrId = tdr.id;
-    
+
             // Register a callback function for when the file is changed
             fileWatcher.onDidChange(async (uri) => {
                 const td = await this.readTDR(uri);
-                if(td) {
-                    if(this._tdrs[tdrId]) {
+                if (td) {
+                    if (this._tdrs[tdrId]) {
                         this._tdrs[tdrId] = td;
                         this.notifyObservers(this._tdrs);
                     }
@@ -524,45 +510,7 @@ export class TechDocRecs extends Observable {
         this.notifyObservers(this._tdrs);
     }
 
-    private async addExplorerTechDebt(uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
-
-        var title = await vscode.window.showInputBox({
-            prompt: 'Enter a title for the technical debt:',
-            placeHolder: path.basename(uri.fsPath),
-        });
-
-        if (title && (vscode.workspace.workspaceFolders !== undefined)) {
-            var tdFileName = title.replace(/\s+/g, '-');
-            tdFileName = tdFileName.replace(/[^\w-]/gi, '') + ".tdr";
-
-            const td = new TechDocRec();
-            td.init(title);
-            td.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
-
-            const tdFilePath = path.join(path.dirname(uri.fsPath), ".tdr", tdFileName);
-
-            // Set TDR URI
-            td.tdrFile = vscode.Uri.file(tdFilePath);
-
-            if (startLine) {
-                td.startLine = startLine;
-            }
-            if (startColumn) {
-                td.startColumn = startColumn;
-            }
-            if (endLine) {
-                td.endLine = endLine;
-            }
-            if (endColumn) {
-                td.endColumn = endColumn;
-            }
-
-            this.registerTechDocRec(td);
-
-            td.persist(tdFilePath);
-        }
-    }
-
+    // Reads a TDR based on an URI for internal usage
     private readTDR(uri: vscode.Uri): Promise<TechDocRec> {
 
         const filePath = uri.fsPath;
@@ -589,6 +537,7 @@ export class TechDocRecs extends Observable {
         });
     }
 
+    // Collects present TDRs in workspace and registers them
     private getTechDocRecsInWorkspace() {
 
         if (vscode.workspace.workspaceFolders !== undefined) {
@@ -599,7 +548,7 @@ export class TechDocRecs extends Observable {
             files.then((uris) => {
                 uris.forEach(async uri => {
                     const td = await this.readTDR(uri);
-                    if(td) {
+                    if (td) {
                         this.registerTechDocRec(td);
                     }
                 });
@@ -609,8 +558,17 @@ export class TechDocRecs extends Observable {
         }
     }
 
-    get techDocRecs(): { [id: string]: TechDocRec; } {
-        return this._tdrs;
+    // Notification function in case a present technical doc record has changed based on user input
+    public update(id: string) {
+        if (id) {
+            const tdr = this.techDocRecs[id];
+            if (tdr) {
+                // Inform observers
+                this.notifyObservers(this._tdrs);
+
+                tdr.persist();
+            }
+        }
     }
 }
 

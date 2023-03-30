@@ -102,3 +102,19 @@ tbody tr:hover {
 .hidden {
   display: none;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.top {
+  height: 420px;
+  overflow-y: scroll;
+}
+
+.bottom {
+  height: 100%;
+  overflow-y: scroll;
+}

@@ -18,7 +18,7 @@ techDebtFilterLow.addEventListener('change', update);
 // Do update if last interaction was after 500ms
 var updateTimeout = null;
 
-// Do update if last interaction was after 500ms
+// Last set TDRs
 var lastTDRs = null;
 
 // Last selected TDR ID
@@ -50,61 +50,48 @@ function update() {
 
 function updateInput(attribute, value) {
   var input = $("input[id='techdocrec-" + attribute + "']");
-  if(input) {
+  if (input) {
     input.val(value);
   }
 }
 
-function addChangeListener(attribute) {
-  $(document).ready(function() {
-    $("input[id='techdocrec-" + attribute + "']").change(function() {
-      if(lastTDRs && curTdrId) {
-        // Do something when the input value changes
-        var inputValue = $(this).val();
-        // Change attribute
-        lastTDRs[curTdrId].resource.metadata[attribute] = inputValue;
-        tsVscode.postMessage({type: 'onTDChange', message: curTdrId});
-      }
+function addChangeListener(attribute, value) {
+  $(document).ready(function () {
+    $("input[id='techdocrec-" + attribute + "']").change(function () {
+      notifyAttribute(attribute, $(this).val());
     });
   });
 }
 
-function displayTDR(id) {
-  if(lastTDRs && id) {
-    updateInput("title",             lastTDRs[id].resource.metadata.title);
-    updateInput("owner",             lastTDRs[id].resource.metadata.owner);
-    updateInput("status",            lastTDRs[id].resource.metadata.status);
-    updateInput("resolution",        lastTDRs[id].resource.metadata.resolution);
-    updateInput("type",              lastTDRs[id].resource.metadata.type);
-    updateInput("severity",          lastTDRs[id].resource.metadata.severity);
-    updateInput("priority",          lastTDRs[id].resource.metadata.priority);
-    updateInput("workitem",          lastTDRs[id].resource.metadata.workitem);
-    updateInput("cost",              lastTDRs[id].resource.metadata.cost);
-    updateInput("effort",            lastTDRs[id].resource.metadata.effort);
-    updateInput("detectionPhase",    lastTDRs[id].resource.metadata.detectionPhase);
-    updateInput("detectionMethod",   lastTDRs[id].resource.metadata.detectionMethod);
-    updateInput("injectionPhase",    lastTDRs[id].resource.metadata.injectionPhase);
-    updateInput("injectionQualifier",lastTDRs[id].resource.metadata.injectionQualifier);
-    updateInput("tags",              lastTDRs[id].resource.metadata.tags);
+function notifyAttribute(attribute, value) {
+  if (lastTDRs && curTdrId) {
+    // Do something when the input value changes
+    var inputValue = value;
+    // Change attribute
+    lastTDRs[curTdrId].resource.metadata[attribute] = inputValue;
+    tsVscode.postMessage({ type: 'onTDChange', id: curTdrId, attribute: attribute, value: inputValue });
   }
 }
 
-function addChangeListeners() {
-    addChangeListener("title");
-    addChangeListener("owner");
-    addChangeListener("status");
-    addChangeListener("resolution");
-    addChangeListener("type");
-    addChangeListener("severity");
-    addChangeListener("priority");
-    addChangeListener("workitem");
-    addChangeListener("cost");
-    addChangeListener("effort");
-    addChangeListener("detectionPhase");
-    addChangeListener("detectionMethod");
-    addChangeListener("injectionPhase");
-    addChangeListener("injectionQualifier");
-    addChangeListener("tags");
+function displayTDR(id) {
+  if (lastTDRs && id) {
+    updateInput("title", lastTDRs[id].resource.metadata.title);
+    updateInput("owner", lastTDRs[id].resource.metadata.owner);
+    updateInput("status", lastTDRs[id].resource.metadata.status);
+    updateInput("resolution", lastTDRs[id].resource.metadata.resolution);
+    updateInput("type", lastTDRs[id].resource.metadata.type);
+    updateInput("severity", lastTDRs[id].resource.metadata.severity);
+    updateInput("priority", lastTDRs[id].resource.metadata.priority);
+    updateInput("workitem", lastTDRs[id].resource.metadata.workitem);
+    updateInput("cost", lastTDRs[id].resource.metadata.cost);
+    updateInput("effort", lastTDRs[id].resource.metadata.effort);
+    updateInput("detectionPhase", lastTDRs[id].resource.metadata.detectionPhase);
+    updateInput("detectionMethod", lastTDRs[id].resource.metadata.detectionMethod);
+    updateInput("injectionPhase", lastTDRs[id].resource.metadata.injectionPhase);
+    updateInput("injectionQualifier", lastTDRs[id].resource.metadata.injectionQualifier);
+    updateInput("tags", lastTDRs[id].resource.metadata.tags);
+    updateInput("requirements", lastTDRs[id].resource.metadata.requirements);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -140,15 +127,20 @@ window.addEventListener('message', event => {
 });
 
 $(document).ready(function () {
-  $('table').on('click','tr', function() {
+  $('table').on('click', 'tr', function () {
     curTdrId = $(this).attr('id');
 
-    if(curTdrId) {
+    if (curTdrId) {
       displayTDR(curTdrId);
-      tsVscode.postMessage({type: 'onTDClick', message: curTdrId});
+      tsVscode.postMessage({ type: 'onTDClick', id: curTdrId });
     }
   });
 });
+
+
+// ---------------------------------------------------------------------------
+// Call-backs
+// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Function calls
@@ -158,7 +150,4 @@ $(document).ready(function () {
 update();
 
 // Initialize technical debts if opened
-tsVscode.postMessage({type: 'update'});
-
-// Add change listeners
-addChangeListeners();
+tsVscode.postMessage({ type: 'update' });

@@ -8,6 +8,34 @@
     "Other"
   ],
   "contributes": {
+    "configuration": {
+      "title": "Technical Doc Records",
+      "properties": {
+        "vscode-tdr.template.debt": {
+          "type": "array",
+          "default": [
+            "Description",
+            "Impedes",
+            "Costs",
+            "Effort to fix",
+            "Options",
+            "Decision"
+          ],
+          "description": "Specifies the chapters to be used for technical debts."
+        },
+        "vscode-tdr.template.adr": {
+          "type": "array",
+          "default": [
+            "Context and Problem Statement",
+            "Decision Drivers",
+            "Considered Options",
+            "Decision Outcome",
+            "Consequences"
+          ],
+          "description": "Specifies the chapters to be used for architecture decision records."
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -29,6 +57,11 @@
       ]
     },
     "commands": [
+      {
+        "command": "vscode-tdr.addExplorerADR",
+        "category": "Technical Doc Records",
+        "title": "Add architecture decision record"
+      },
       {
         "command": "vscode-tdr.addExplorerTechDebt",
         "category": "Technical Doc Records",
@@ -54,6 +87,11 @@
           "command": "vscode-tdr.addExplorerTechDebt",
           "group": "techdoc",
           "when": "explorerViewletVisible"
+        },
+        {
+          "command": "vscode-tdr.addExplorerADR",
+          "group": "techdoc",
+          "when": "explorerViewletVisible"
         }
       ],
       "editor/context": [
@@ -61,7 +99,7 @@
           "command": "vscode-tdr.addEditorTechDebt",
           "group": "techdoc",
           "when": "editorTextFocus"
-        }        
+        }
       ]
     }
   },

@@ -52,27 +52,34 @@ export class TechDocRecSidebar implements vscode.WebviewViewProvider, Observer {
 
     webviewView.webview.onDidReceiveMessage(async (data: any) => {
       switch (data.type) {
+        // Update WebView e.g. for initialization
         case 'update': {
           if (this.webviewView) {
             this.webviewView.webview.postMessage({ type: 'tdrs', data: this.tdrs.techDocRecs });
           }
           break;
         }
+        // User changed attributes of the technical doc record
         case 'onTDChange': {
-          if (data.message) {
+          if (data.id && data.attribute && data.value) {
             if(vscode.workspace.workspaceFolders !== undefined) {
 
-              // TODO: Change file from here
+              // Update TDR's attributes
+              this.tdrs.techDocRecs[data.id].setAttribute(data.attribute, data.value);
+
+              // Request technical doc records to update based on UI change
+              this.tdrs.update(data.id);
 
             }
           }
           break;
         }
+        // User clicked on technical doc record
         case 'onTDClick': {
-          if (data.message) {
+          if (data.id) {
             if(vscode.workspace.workspaceFolders !== undefined) {
 
-              const tdrFile = this.tdrs.techDocRecs[data.message].tdrFile;
+              const tdrFile = this.tdrs.techDocRecs[data.id].tdrFile;
 
               if(tdrFile) {
                 // Open editor and markdown
@@ -89,12 +96,14 @@ export class TechDocRecSidebar implements vscode.WebviewViewProvider, Observer {
           }
           break;
         }
+        // WebView sent an information
         case 'onInformation': {
           if (data.message) {
             vscode.window.showInformationMessage(data.message);
           }
           break;
         }
+        // WebView sent an error
         case 'onError': {
           if (data.message) {
             console.log(data.message);
@@ -108,6 +117,7 @@ export class TechDocRecSidebar implements vscode.WebviewViewProvider, Observer {
     this.webviewView.webview.postMessage({ type: 'tdrs', data: this.tdrs.techDocRecs });
   }
 
+  // WebView has to update because observed technical doc record file has changed
   public update(data: any) {
     if (this.webviewView) {
       this.webviewView.webview.postMessage({ type: 'tdrs', data: data });

@@ -17,314 +17,383 @@
 
 <body>
 	<h3 class="separator">Properties:</h3>
+	<div class="container">
+		<div class="top">
+			<form>
+				<label for="techdocrec-title">Title</label>
+				<input type="text" id="techdocrec-title" name="techdocrec-title"
+					placeholder="Title of the technical doc record">
+				<script>
+					$(document).ready(function () {
+						$("input[id='techdocrec-title']").change(function () {
+							notifyAttribute("title", $(this).val());
+						});
+					});
+				</script>
 
-	<form>
-		<label for="techdocrec-title">Title</label>
-		<input type="text" id="techdocrec-title" name="techdocrec-title" placeholder="Title of the technical doc record">
+				<label for="techdocrec-owner">Owner</label>
+				<input type="text" id="techdocrec-owner" name="techdocrec-owner"
+					placeholder="Solution owner/responsible">
+				<script>
+					$(document).ready(function () {
+						$("input[id='techdocrec-owner']").change(function () {
+							notifyAttribute("owner", $(this).val());
+						});
+					});
+				</script>
 
-		<label for="techdocrec-owner">Owner</label>
-		<input type="text" id="techdocrec-owner" name="techdocrec-owner" placeholder="Solution owner/responsible">
+				<label for="techdocrec-priority">Priority</label>
+				<input type="text" id="techdocrec-priority" name="techdocrec-priority" placeholder="low/medium/high">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"low",
+							"medium",
+							"high"
+						];
 
-		<label for="techdocrec-priority">Priority</label>
-		<input type="text" id="techdocrec-priority" name="techdocrec-priority" placeholder="low/medium/high">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"low",
-					"medium",
-					"high"
-				];
+						$('#techdocrec-priority').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("priority", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-priority').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-severity">Severity</label>
+				<input type="text" id="techdocrec-severity" name="techdocrec-severity"
+					placeholder="minor/normal/major/critical/blocker/warning/information/hint">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"minor",
+							"normal",
+							"major",
+							"critical",
+							"blocker",
+							"warning",
+							"information"
+						];
 
-		<label for="techdocrec-severity">Severity</label>
-		<input type="text" id="techdocrec-severity" name="techdocrec-severity"
-			placeholder="minor/normal/major/critical/blocker/warning/information/hint">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"minor",
-					"normal",
-					"major",
-					"critical",
-					"blocker",
-					"warning",
-					"information",
-					"hint"
-				];
+						$('#techdocrec-severity').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("severity", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-severity').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-cost">Cost</label>
+				<input type="text" id="techdocrec-cost" name="techdocrec-cost" placeholder="low/medium/high">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"low",
+							"medium",
+							"high"
+						];
 
-		<label for="techdocrec-cost">Cost</label>
-		<input type="text" id="techdocrec-cost" name="techdocrec-cost" placeholder="low/medium/high">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"low",
-					"medium",
-					"high"
-				];
+						$('#techdocrec-cost').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("cost", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-cost').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-effort">Effort</label>
+				<input type="text" id="techdocrec-effort" name="techdocrec-effort" placeholder="low/medium/high">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"low",
+							"medium",
+							"high"
+						];
 
-		<label for="techdocrec-effort">Effort</label>
-		<input type="text" id="techdocrec-effort" name="techdocrec-effort" placeholder="low/medium/high">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"low",
-					"medium",
-					"high"
-				];
+						$('#techdocrec-effort').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("effort", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-effort').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-status">Status</label>
+				<input type="text" id="techdocrec-status" name="techdocrec-status"
+					placeholder="new/in progress/closed/deferred">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"new",
+							"in progress",
+							"closed",
+							"deferred"
+						];
 
-		<label for="techdocrec-status">Status</label>
-		<input type="text" id="techdocrec-status" name="techdocrec-status" placeholder="new/in progress/closed/deferred">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"new",
-					"in progress",
-					"closed",
-					"deferred"
-				];
+						$('#techdocrec-status').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("status", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-status').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-resolution">Resolution</label>
+				<input type="text" id="techdocrec-resolution" name="techdocrec-resolution"
+					placeholder="open/solved/invalid/duplicate">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"open",
+							"solved",
+							"invalid",
+							"duplicate"
+						];
 
-		<label for="techdocrec-resolution">Resolution</label>
-		<input type="text" id="techdocrec-resolution" name="techdocrec-resolution"
-			placeholder="open/solved/invalid/duplicate">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"open",
-					"solved",
-					"invalid",
-					"duplicate"
-				];
+						$('#techdocrec-resolution').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("resolution", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-resolution').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-type">Type</label>
+				<input type="text" id="techdocrec-type" name="techdocrec-type"
+					placeholder="debt/bug/vulnerability/smell/style/todo/fixme/info/decision">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"debt",
+							"bug",
+							"vulnerability",
+							"smell",
+							"style",
+							"todo",
+							"fixme",
+							"info",
+							"decision"
+						];
 
-		<label for="techdocrec-type">Type</label>
-		<input type="text" id="techdocrec-type" name="techdocrec-type" placeholder="debt/bug/vulnerability/smell/style/todo/fixme/info/decision">
-		<script>
-			$(document).ready(function () {
-				var options = [
-                    "debt",
-					"bug",
-					"vulnerability",
-					"smell",
-					"style",
-					"todo",
-					"fixme",
-                    "info",
-                    "decision"
-				];
+						$('#techdocrec-type').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("type", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-type').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-workitem">Workitem</label>
+				<input type="text" id="techdocrec-workitem" name="techdocrec-workitem" placeholder="Ticket URL/Id">
+				<script>
+					$(document).ready(function () {
+						$("input[id='techdocrec-workitem']").change(function () {
+							notifyAttribute("workitem", $(this).val());
+						});
+					});
+				</script>
 
-		<label for="techdocrec-workitem">Workitem</label>
-		<input type="text" id="techdocrec-workitem" name="techdocrec-workitem" placeholder="Ticket URL/Id">
+				<label for="techdocrec-detectionPhase">Detection Phase</label>
+				<input type="text" id="techdocrec-detectionPhase" name="techdocrec-detectionPhase"
+					placeholder="When it was detected?">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"Requirements",
+							"Architecture",
+							"Detailed Design",
+							"Implementation",
+							"Integration",
+							"Unit Test",
+							"Integration Test",
+							"Qualification Test",
+							"Acceptance Test",
+							"Other"
+						];
 
-		<label for="techdocrec-detectionPhase">Detection Phase</label>
-		<input type="text" id="techdocrec-detectionPhase" name="techdocrec-detectionPhase"
-			placeholder="When it was detected?">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"Requirements",
-					"Architecture",
-					"Detailed Design",
-					"Implementation",
-					"Integration",
-					"Unit Test",
-					"Integration Test",
-					"Qualification Test",
-					"Acceptance Test",
-					"Other"
-				];
+						$('#techdocrec-detectionPhase').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("detectionPhase", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-detectionPhase').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-detectionMethod">Detection Method</label>
+				<input type="text" id="techdocrec-detectionMethod" name="techdocrec-detectionMethod"
+					placeholder="How it was detected?">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"Debugging",
+							"Review",
+							"Code Analysis",
+							"Unit Testing",
+							"Integration Testing",
+							"Regression Testing",
+							"Acceptance Testing",
+							"Profiling",
+							"Other"
+						];
 
-		<label for="techdocrec-detectionMethod">Detection Method</label>
-		<input type="text" id="techdocrec-detectionMethod" name="techdocrec-detectionMethod"
-			placeholder="How it was detected?">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"Debugging",
-					"Review",
-					"Code Analysis",
-					"Unit Testing",
-					"Integration Testing",
-					"Regression Testing",
-					"Acceptance Testing",
-					"Profiling",
-					"Other"
-				];
+						$('#techdocrec-detectionMethod').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("detectionMethod", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-detectionMethod').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-injectionPhase">Injection Phase</label>
+				<input type="text" id="techdocrec-injectionPhase" name="techdocrec-injectionPhase"
+					placeholder="When it was injected?">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"Requirements",
+							"Architecture",
+							"Detailed Design",
+							"Implementation",
+							"Integration",
+							"Unit Test",
+							"Integration Test",
+							"Qualification Test",
+							"Acceptance Test",
+							"Other"
+						];
 
-		<label for="techdocrec-injectionPhase">Injection Phase</label>
-		<input type="text" id="techdocrec-injectionPhase" name="techdocrec-injectionPhase"
-			placeholder="When it was injected?">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"Requirements",
-					"Architecture",
-					"Detailed Design",
-					"Implementation",
-					"Integration",
-					"Unit Test",
-					"Integration Test",
-					"Qualification Test",
-					"Acceptance Test",
-					"Other"
-				];
+						$('#techdocrec-injectionPhase').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("injectionPhase", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-injectionPhase').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-injectionQualifier">Injection Qualifier</label>
+				<input type="text" id="techdocrec-injectionQualifier" name="techdocrec-injectionQualifier"
+					placeholder="Why it was injected?">
+				<script>
+					$(document).ready(function () {
+						var options = [
+							"Misunderstood requirements",
+							"Misunderstood design",
+							"Lack of common practices",
+							"Lack of review",
+							"Lack of analysis",
+							"Lack of testing",
+							"Lack of communication",
+							"Inappropriate reuse",
+							"Complexity",
+							"Inexperience",
+							"Prototype",
+							"Deadline",
+							"Sloppiness",
+							"Other"
+						];
 
-		<label for="techdocrec-injectionQualifier">Injection Qualifier</label>
-		<input type="text" id="techdocrec-injectionQualifier" name="techdocrec-injectionQualifier"
-			placeholder="Why it was injected?">
-		<script>
-			$(document).ready(function () {
-				var options = [
-					"Misunderstood requirements",
-					"Misunderstood design",
-					"Lack of common practices",
-					"Lack of review",
-					"Lack of analysis",
-					"Lack of testing",
-					"Lack of communication",
-					"Inappropriate reuse",
-					"Complexity",
-					"Inexperience",
-					"Prototype",
-					"Deadline",
-					"Sloppiness",
-					"Other"
-				];
+						$('#techdocrec-injectionQualifier').autocomplete({
+							source: options,
+							minLength: 0,
+							change: function () {
+								notifyAttribute("injectionQualifier", $(this).val());
+							}
+						}).focus(function () {
+							$(this).autocomplete("search");
+						});
+					});
+				</script>
 
-				$('#techdocrec-injectionQualifier').autocomplete({
-					source: options,
-					minLength: 0 // Vorschläge sofort anzeigen
-				}).focus(function () {
-					// Vorschläge anzeigen, wenn das Textfeld fokussiert wird
-					$(this).autocomplete("search");
-				});
-			});
-		</script>
+				<label for="techdocrec-tags">Tags</label>
+				<input type="text" id="techdocrec-tags" name="techdocrec-tags"
+					placeholder="root, arch, code, test, ...">
+				<script>
+					$(document).ready(function () {
+						$("input[id='techdocrec-tags']").change(function () {
+							notifyAttribute("tags", $(this).val());
+						});
+					});
+				</script>
 
-		<label for="techdocrec-tags">Tags</label>
-		<input type="text" id="techdocrec-tags" name="techdocrec-tags" placeholder="root, arch, code, test, ...">
-	</form>
+				<label for="techdocrec-requirements">Requirements</label>
+				<input type="text" id="techdocrec-requirements" name="techdocrec-requirements"
+					placeholder="ID1, ID2, ID3, ...">
+				<script>
+					$(document).ready(function () {
+						$("input[id='techdocrec-requirements']").change(function () {
+							notifyAttribute("requirements", $(this).val());
+						});
+					});
+				</script>
+			</form>
+		</div>
 
+		<div class="bottom">
+			<div class="hidden">
+				<h3 class="separator">Filter:</h3>
 
-	<div class="hidden">
-		<h3 class="separator">Filter:</h3>
+				<label class="checkbox">High
+					<input type="checkbox" checked="checked" id="techdocrec-filter-high">
+					<span class="checkmark"></span>
+				</label>
+				<label class="checkbox">Medium
+					<input type="checkbox" checked="checked" id="techdocrec-filter-medium">
+					<span class="checkmark"></span>
+				</label>
+				<label class="checkbox">Low
+					<input type="checkbox" checked="checked" id="techdocrec-filter-low">
+					<span class="checkmark"></span>
+				</label>
+			</div>
 
-		<label class="checkbox">High
-			<input type="checkbox" checked="checked" id="techdocrec-filter-high">
-			<span class="checkmark"></span>
-		</label>
-		<label class="checkbox">Medium
-			<input type="checkbox" checked="checked" id="techdocrec-filter-medium">
-			<span class="checkmark"></span>
-		</label>
-		<label class="checkbox">Low
-			<input type="checkbox" checked="checked" id="techdocrec-filter-low">
-			<span class="checkmark"></span>
-		</label>
+			<h3 class="separator">Technical Doc Records:</h3>
+			<table id="techdocrec-table" width="100%">
+				<thead></thead>
+				<tbody></tbody>
+			</table>
+		</div>
 	</div>
-
-	<h3 class="separator">Technical Doc Records:</h3>
-	<table id="techdocrec-table" width="100%">
-		<thead></thead>
-		<tbody></tbody>
-	</table>
 
 	<script src="{{sidebar.js}}"></script>
 </body>
