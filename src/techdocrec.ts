@@ -245,7 +245,7 @@ class TechDocRec {
                 this.title
             );
 
-            diagnostic.source = this.type || "Technical Doc Record";
+            diagnostic.source = this.type || "";
 
             switch (this.severity) {
                 case "error":
@@ -469,7 +469,7 @@ export class TechDocRecs extends Observable {
             adr.init(title, type);
             adr.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
 
-            const tdFilePath = path.join(path.dirname(uri.fsPath), ".tdr", tdFileName);
+            const tdFilePath = path.join(path.dirname(uri.fsPath), vscode.workspace.getConfiguration().get<string>('vscode-tdr.folder.name') || ".tdr", tdFileName);
 
             // Set TDR URI
             adr.tdrFile = vscode.Uri.file(tdFilePath);

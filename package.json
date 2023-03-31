@@ -11,6 +11,11 @@
     "configuration": {
       "title": "Technical Doc Records",
       "properties": {
+        "vscode-tdr.folder.name": {
+          "type": "string",
+          "default": ".tdr",
+          "description": "Specifies the folder name in which technical doc records are stored."
+        },
         "vscode-tdr.template.debt": {
           "type": "array",
           "default": [
