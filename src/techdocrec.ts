@@ -357,12 +357,27 @@ class TechDocRec {
         };
 
         this.description = os.EOL + "# " + title + os.EOL + os.EOL;
-        this.description += "## Description" + os.EOL + os.EOL;      // What is the issue?
-        this.description += "## Impedes" + os.EOL + os.EOL;          // What happens if we don't fix it?
-        this.description += "## Costs" + os.EOL + os.EOL;            // What does it means in terms of costs if we don't fix it?
-        this.description += "## Effort to fix" + os.EOL + os.EOL;    // How much will it cost to resolve?
-        this.description += "## Options" + os.EOL + os.EOL;
-        this.description += "## Decision" + os.EOL + os.EOL;
+
+        var template = ["Description"];
+
+        if(type) {
+            switch (type) {
+                case "debt":
+                    template = (vscode.workspace.getConfiguration().get<string>('vscode-tdr.template.debt') || ["Description"]) as string[];
+                    break;
+                case "decision":
+                    template = (vscode.workspace.getConfiguration().get<string>('vscode-tdr.template.adr') || ["Description"]) as string[];
+                    break;
+                default:
+                    break;
+            }
+            this.type = type;
+        }
+
+        template.forEach(chapter => {
+            this.description += "## " + chapter + os.EOL + os.EOL;
+        });
+
     }
 
     public async persist() {
@@ -442,7 +457,7 @@ export class TechDocRecs extends Observable {
     private async createTDR(type: string, uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
 
         var title = await vscode.window.showInputBox({
-            prompt: 'Enter a title for the architecture decision:',
+            prompt: 'Enter a title for the technical doc record:',
             placeHolder: path.basename(uri.fsPath),
         });
 
@@ -451,8 +466,7 @@ export class TechDocRecs extends Observable {
             tdFileName = tdFileName.replace(/[^\w-]/gi, '') + ".tdr";
 
             const adr = new TechDocRec();
-            adr.init(title);
-            adr.type = type;
+            adr.init(title, type);
             adr.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
 
             const tdFilePath = path.join(path.dirname(uri.fsPath), ".tdr", tdFileName);
