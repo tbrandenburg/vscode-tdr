@@ -16,7 +16,7 @@
 </head>
 
 <body>
-	<h3 class="separator">Properties:</h3>
+	<h3 class="separator">Properties</h3>
 	<div class="container">
 		<div class="top">
 			<form>
@@ -366,12 +366,14 @@
 						});
 					});
 				</script>
+
+				<input type="button" value="Remove" id="techdocrec-button-remove" name="techdocrec-button-remove">
 			</form>
 		</div>
 
 		<div class="bottom">
 			<div class="hidden">
-				<h3 class="separator">Filter:</h3>
+				<h3 class="separator">Filter</h3>
 
 				<label class="checkbox">High
 					<input type="checkbox" checked="checked" id="techdocrec-filter-high">
@@ -387,9 +389,10 @@
 				</label>
 			</div>
 
-			<h3 class="separator">Technical Doc Records:</h3>
+			<h3 class="separator">Technical Doc Records</h3>
+			<br />
 			<table id="techdocrec-table" width="100%">
-				<thead></thead>
+				<thead><th>Type</th><th>Status</th><th>Title</th><th>Owner</th></thead>
 				<tbody></tbody>
 			</table>
 		</div>

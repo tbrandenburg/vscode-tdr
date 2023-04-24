@@ -13,8 +13,8 @@ body {
 	width: 100%;
 	padding: 3px;
 	margin-top: 8px;
-	background-color: var(--vscode-editor-background);
 	cursor: context-menu;
+  font-weight: bold;
 }
 
 /* input area */
@@ -96,6 +96,19 @@ tbody tr:hover {
 
 .vscode-dark tbody tr:hover {
   background-color: #444444;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+thead {
+  border-bottom: 1px solid;
+}
+
+td {
+  border: 1px dashed;
+  border-color: var(--vscode-disabledForeground);
 }
 
 /* misc */

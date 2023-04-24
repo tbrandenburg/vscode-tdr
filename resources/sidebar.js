@@ -94,6 +94,10 @@ function displayTDR(id) {
   }
 }
 
+function clearInputs() {
+  $('input[type="text"], input[type="number"], textarea').val('');
+}
+
 // ---------------------------------------------------------------------------
 // Callbacks
 // ---------------------------------------------------------------------------
@@ -111,14 +115,43 @@ window.addEventListener('message', event => {
       // Initially reset content
       tableBody.innerHTML = '';
 
+      foundCurTdrId = false;
+
       // Assuming it's a dictionary...
       for (let key in lastTDRs) {
         const tr = document.createElement('tr');
-        const tdTitle = document.createElement('td');
         tr.id = key;
+
+        // Type
+        const tdType = document.createElement('td');
+        tdType.textContent = lastTDRs[key].resource.metadata.type;
+        tr.appendChild(tdType);
+
+        // Status
+        const tdStatus = document.createElement('td');
+        tdStatus.textContent = lastTDRs[key].resource.metadata.status;
+        tr.appendChild(tdStatus);
+
+        // Title
+        const tdTitle = document.createElement('td');
         tdTitle.textContent = lastTDRs[key].resource.metadata.title;
         tr.appendChild(tdTitle);
+
+        // Owner
+        const tdOwner = document.createElement('td');
+        tdOwner.textContent = lastTDRs[key].resource.metadata.owner;
+        tr.appendChild(tdOwner);
+
         tableBody.appendChild(tr);
+
+        if (key === curTdrId) {
+          foundCurTdrId = true;
+        }
+      }
+
+      if (!foundCurTdrId) {
+        curTdrId = null;
+        clearInputs();
       }
       break;
     default:
@@ -127,6 +160,7 @@ window.addEventListener('message', event => {
 });
 
 $(document).ready(function () {
+  // TDR table td on-click events
   $('table').on('click', 'tr', function () {
     curTdrId = $(this).attr('id');
 
@@ -135,12 +169,35 @@ $(document).ready(function () {
       tsVscode.postMessage({ type: 'onTDClick', id: curTdrId });
     }
   });
+
+  // TDR table th on-click events
+  $('table').on('click', 'th', function () {
+    var index = $(this).index();
+    var rows = $(this).closest('table').find('tr');
+
+    rows.sort(function (a, b) {
+      var aValue = $(a).children("td").eq(index).text();
+      var bValue = $(b).children("td").eq(index).text();
+
+      if ($.isNumeric(aValue) && $.isNumeric(bValue)) {
+        return aValue - bValue;
+      } else {
+        return aValue.localeCompare(bValue);
+      }
+    });
+
+    $.each(rows, function (index, row) {
+      $("#meineTabelle tbody").append(row);
+    });
+  });
+
+  // Remove button on-click event
+  $("#techdocrec-button-remove").on("click", function () {
+    if (curTdrId) {
+      tsVscode.postMessage({ type: 'onTDRemove', id: curTdrId });
+    }
+  });
 });
-
-
-// ---------------------------------------------------------------------------
-// Call-backs
-// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Function calls

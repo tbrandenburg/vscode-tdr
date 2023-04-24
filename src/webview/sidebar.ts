@@ -96,6 +96,13 @@ export class TechDocRecSidebar implements vscode.WebviewViewProvider, Observer {
           }
           break;
         }
+        // User clicked on remove button
+        case 'onTDRemove': {
+          if (data.id) {
+            this.tdrs.remove(data.id);
+          }
+          break;
+        }
         // WebView sent an information
         case 'onInformation': {
           if (data.message) {

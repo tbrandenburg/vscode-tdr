@@ -57,6 +57,7 @@ class TechDocRec {
     private _tdrFile: vscode.Uri | undefined;
     private _discussion: any[] = [];
     private _votes: string[] = [];
+    private _fileWatcher: vscode.FileSystemWatcher | undefined;
 
     constructor() {
         this.init();
@@ -146,6 +147,10 @@ class TechDocRec {
         return this._tdrFile;
     }
 
+    get fileWatcher(): any {
+        return this._fileWatcher;
+    }
+
     set id(id: string) {
         this.resource.metadata.id = id;
     }
@@ -230,6 +235,10 @@ class TechDocRec {
         this._tdrFile = tdrFile;
     }
 
+    set fileWatcher(fw: vscode.FileSystemWatcher) {
+        this._fileWatcher = fw;
+    }
+
     public addComment(comment: string[]) {
         if (this._discussion) {
             this._discussion.push(comment);
@@ -238,94 +247,77 @@ class TechDocRec {
         }
     }
 
-    private getDiagnostic(): any {
-        if (vscode.workspace.workspaceFolders !== undefined) {
-            const diagnostic = new vscode.Diagnostic(
-                new vscode.Range(this.startLine, this.startColumn, this.endLine, this.endColumn),
-                this.title
-            );
+    public getDiagnostic(): any {
+        const diagnostic = new vscode.Diagnostic(
+            new vscode.Range(this.startLine, this.startColumn, this.endLine, this.endColumn),
+            this.title
+        );
 
-            diagnostic.source = this.type || "";
+        diagnostic.source = this.type || "";
 
-            switch (this.severity) {
-                case "error":
-                    diagnostic.severity = vscode.DiagnosticSeverity.Error;
-                    break;
-                case "major":
-                    diagnostic.severity = vscode.DiagnosticSeverity.Error;
-                    break;
-                case "critical":
-                    diagnostic.severity = vscode.DiagnosticSeverity.Error;
-                    break;
-                case "blocker":
-                    diagnostic.severity = vscode.DiagnosticSeverity.Error;
-                    break;
-                case "minor":
-                    diagnostic.severity = vscode.DiagnosticSeverity.Information;
-                    break;
-                case "information":
-                    diagnostic.severity = vscode.DiagnosticSeverity.Information;
-                    break;
-                default:
-                    switch (this.type) {
-                        case "debt":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
-                            break;
-                        case "bug":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Error;
-                            break;
-                        case "vulnerability":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
-                            break;
-                        case "smell":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
-                            break;
-                        case "style":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Information;
-                            break;
-                        case "todo":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
-                            break;
-                        case "fixme":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
-                            break;
-                        case "info":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Information;
-                            break;
-                        case "decision":
-                            diagnostic.severity = vscode.DiagnosticSeverity.Information;
-                            break;
-                        default:
-                            diagnostic.severity = vscode.DiagnosticSeverity.Warning;
-                            break;
-                    }
-                    break;
-            }
-            return diagnostic;
-        } else {
-            return undefined;
+        diagnostic.code = this.id;
+
+        switch (this.severity) {
+            case "error":
+                diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                break;
+            case "major":
+                diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                break;
+            case "critical":
+                diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                break;
+            case "blocker":
+                diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                break;
+            case "minor":
+                diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                break;
+            case "information":
+                diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                break;
+            default:
+                switch (this.type) {
+                    case "debt":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                        break;
+                    case "bug":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Error;
+                        break;
+                    case "vulnerability":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                        break;
+                    case "smell":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                        break;
+                    case "style":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                        break;
+                    case "todo":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                        break;
+                    case "fixme":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                        break;
+                    case "info":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                        break;
+                    case "decision":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                        break;
+                    default:
+                        diagnostic.severity = vscode.DiagnosticSeverity.Warning;
+                        break;
+                }
+                break;
         }
+        return diagnostic;
     }
 
     public setAttribute(attribute: string, value: any) {
         if (value) {
             this.resource.metadata[attribute] = value;
         }
-    }
-
-    public raiseProblem() {
-        const diagnostic = this.getDiagnostic();
-        if (diagnostic) {
-            if (vscode.workspace.workspaceFolders !== undefined) {
-                const uri = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, this.file));
-                const diagnostics = vscode.languages.createDiagnosticCollection('TechDocRecs');
-                diagnostics.set(uri, [diagnostic]);
-            }
-        }
-    }
-
-    public removeProblem() {
-        // TODO
     }
 
     public toString(): string {
@@ -360,7 +352,7 @@ class TechDocRec {
 
         var template = ["Description"];
 
-        if(type) {
+        if (type) {
             switch (type) {
                 case "debt":
                     template = (vscode.workspace.getConfiguration().get<string>('vscode-tdr.template.debt') || ["Description"]) as string[];
@@ -380,26 +372,52 @@ class TechDocRec {
 
     }
 
-    public async persist() {
-        if (this.tdrFile) {
-            const tdrPath = this.tdrFile.fsPath;
-            fs.mkdir(path.dirname(tdrPath), { recursive: true }, (err) => {
-                if (err) {
-                    vscode.window.showErrorMessage("Error creating directory: " + path.dirname(tdrPath));
-                }
-
-                fs.writeFile(tdrPath, this.toString(), (err) => {
+    // Stores TDR on disk
+    public persist(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if (this.tdrFile) {
+                const tdrPath = this.tdrFile.fsPath;
+                fs.mkdir(path.dirname(tdrPath), { recursive: true }, (err) => {
                     if (err) {
-                        vscode.window.showErrorMessage("Error creating file: " + tdrPath);
+                        vscode.window.showErrorMessage("Error creating directory: " + path.dirname(tdrPath));
+                        reject(err);
+                    } else {
+                        fs.writeFile(tdrPath, this.toString(), (err) => {
+                            if (err) {
+                                vscode.window.showErrorMessage("Error creating file: " + tdrPath);
+                                reject(err);
+                            } else {
+                                resolve();
+                            }
+                        });
                     }
                 });
-            });
-        }
+            }
+        });
+    }
+
+    // Removes TDR from disk
+    public remove(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if (this.tdrFile) {
+                const tdrPath = this.tdrFile.fsPath;
+                fs.unlink(tdrPath, (err) => {
+                    if (err) {
+                        vscode.window.showErrorMessage("Error deleting file: " + tdrPath);
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            }
+        });
     }
 }
 
 export class TechDocRecs extends Observable {
     private _tdrs: { [id: string]: TechDocRec; } = {};
+
+    private _diagnosticCollection: vscode.DiagnosticCollection = vscode.languages.createDiagnosticCollection('TechDocRecs');
 
     get techDocRecs(): { [id: string]: TechDocRec; } {
         return this._tdrs;
@@ -465,49 +483,81 @@ export class TechDocRecs extends Observable {
             var tdFileName = title.replace(/\s+/g, '-');
             tdFileName = tdFileName.replace(/[^\w-]/gi, '') + ".tdr";
 
-            const adr = new TechDocRec();
-            adr.init(title, type);
-            adr.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
+            const tdr = new TechDocRec();
+            tdr.init(title, type);
+            tdr.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
 
             const tdFilePath = path.join(path.dirname(uri.fsPath), vscode.workspace.getConfiguration().get<string>('vscode-tdr.folder.name') || ".tdr", tdFileName);
 
             // Set TDR URI
-            adr.tdrFile = vscode.Uri.file(tdFilePath);
+            tdr.tdrFile = vscode.Uri.file(tdFilePath);
 
             if (startLine) {
-                adr.startLine = startLine;
+                tdr.startLine = startLine;
             }
             if (startColumn) {
-                adr.startColumn = startColumn;
+                tdr.startColumn = startColumn;
             }
             if (endLine) {
-                adr.endLine = endLine;
+                tdr.endLine = endLine;
             }
             if (endColumn) {
-                adr.endColumn = endColumn;
+                tdr.endColumn = endColumn;
             }
 
-            this.registerTechDocRec(adr);
+            await tdr.persist();
 
-            adr.persist();
+            this.registerTechDocRec(tdr);
+
+            this.showTechDocRec(tdr);
         }
     }
 
-    // Publish technical doc record to UI
+    private async removeTDR(tdr: TechDocRec) {
+        await tdr.remove();
+
+        this.unregisterTechDocRec(tdr);
+    }
+
+    private raiseProblem(tdr: TechDocRec) {
+        const diagnostic = tdr.getDiagnostic();
+        if (diagnostic) {
+            if (vscode.workspace.workspaceFolders !== undefined) {
+                const uri = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, tdr.file));
+                var dcarr = this._diagnosticCollection.get(uri)?.slice() as vscode.Diagnostic[];
+                dcarr.push(diagnostic);
+                this._diagnosticCollection.set(uri, dcarr);
+            }
+        }
+    }
+
+    private removeProblem(tdr: TechDocRec) {
+        const diagnostic = tdr.getDiagnostic();
+        if (diagnostic) {
+            if (vscode.workspace.workspaceFolders !== undefined) {
+                const uri = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, tdr.file));
+                var dcarr = this._diagnosticCollection.get(uri)?.slice() as vscode.Diagnostic[];
+                dcarr = dcarr.filter(item => item.code !== tdr.id);
+                this._diagnosticCollection.set(uri, dcarr);
+            }
+        }
+    }
+
+    // Add technical doc record and publish technical doc record to UI
     private registerTechDocRec(tdr: TechDocRec) {
         // Raise item in problem view
-        tdr.raiseProblem();
+        this.raiseProblem(tdr);
 
         // Add to technical doc record array
         this._tdrs[tdr.id] = tdr;
 
         if (tdr.tdrFile) {
             // Register file watcher
-            const fileWatcher = vscode.workspace.createFileSystemWatcher(tdr.tdrFile.fsPath);
+            tdr.fileWatcher = vscode.workspace.createFileSystemWatcher(tdr.tdrFile.fsPath);
             const tdrId = tdr.id;
 
             // Register a callback function for when the file is changed
-            fileWatcher.onDidChange(async (uri) => {
+            tdr.fileWatcher.onDidChange(async (uri: vscode.Uri) => {
                 const td = await this.readTDR(uri);
                 if (td) {
                     if (this._tdrs[tdrId]) {
@@ -522,6 +572,38 @@ export class TechDocRecs extends Observable {
 
         // Inform observers
         this.notifyObservers(this._tdrs);
+    }
+
+    // Remove technical doc record and update UI
+    private unregisterTechDocRec(tdr: TechDocRec) {
+        // Remove item in problem view
+        this.removeProblem(tdr);
+
+        // Remove from technical doc record array
+        delete this._tdrs[tdr.id];
+
+        if (tdr.fileWatcher) {
+            tdr.fileWatcher.dispose();
+        }
+
+        // Inform observers
+        this.notifyObservers(this._tdrs);
+    }
+
+    // Show up technical doc record
+    private showTechDocRec(tdr: TechDocRec) {
+
+        if (tdr.tdrFile) {
+            // Open editor and markdown
+            vscode.window.showTextDocument(tdr.tdrFile, {
+                preview: false,
+                viewColumn: vscode.ViewColumn.One
+            }).then(editor => {
+                vscode.commands.executeCommand('markdown.showPreviewToSide');
+            });
+        } else {
+            vscode.window.showErrorMessage("No technical doc record found!");
+        }
     }
 
     // Reads a TDR based on an URI for internal usage
@@ -581,6 +663,22 @@ export class TechDocRecs extends Observable {
                 this.notifyObservers(this._tdrs);
 
                 tdr.persist();
+            }
+        }
+    }
+
+    // Technical doc record should be removed based on user input
+    public remove(id: string) {
+        if (id) {
+            const tdr = this.techDocRecs[id];
+            if (tdr) {
+                vscode.window
+                    .showInformationMessage("Do you really want to remove " + id + "?", "Yes", "No")
+                    .then(answer => {
+                        if (answer === "Yes") {
+                            this.removeTDR(tdr);
+                        }
+                    })
             }
         }
     }

@@ -6,8 +6,8 @@ date: '2023-03-24'
 file: Folder\src\file.c
 startColumn: 10
 endColumn: 17
+type: smell
 ---
-
 # Also don't like this include!
 
 ## Description
