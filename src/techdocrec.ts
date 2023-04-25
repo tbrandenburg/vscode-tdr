@@ -10,6 +10,7 @@ const yaml = require('js-yaml');
 import { TechDocRecSidebar } from './webview/sidebar';
 
 import { Observable } from './patterns/observer';
+import { parse } from 'path';
 
 interface ITechDocRecMetadataExt extends ITechDocRecMetadata {
     [key: string]: any;
@@ -327,9 +328,18 @@ class TechDocRec {
     public fromString(mmd: string) {
         const parsedData = fm(mmd);
 
-        this.metadata = parsedData.attributes;
+        if (parsedData) {
+            if (parsedData.attributes && Object.keys(parsedData.attributes).length > 0) {
+                this.metadata = parsedData.attributes;
 
-        this.description = parsedData.body;
+                this.description = parsedData.body;
+            } else {
+                throw new Error("Could not find YAML attributes in file!")
+            }
+        } else {
+            throw new Error("Could not parse file!")
+        }
+
     }
 
     public init(title?: string, type?: string) {
@@ -456,10 +466,6 @@ export class TechDocRecs extends Observable {
             }
         }));
 
-        // Register tdr for markdown
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        vscode.workspace.getConfiguration().update("files.associations", { "*.tdr": "markdown" }, false);
-
         // Register sidebar
         context.subscriptions.push(
             vscode.window.registerWebviewViewProvider("vscode-tdr-sidebar", sidebar)
@@ -480,36 +486,52 @@ export class TechDocRecs extends Observable {
         });
 
         if (title && (vscode.workspace.workspaceFolders !== undefined)) {
-            var tdFileName = title.replace(/\s+/g, '-');
-            tdFileName = tdFileName.replace(/[^\w-]/gi, '') + ".tdr";
 
             const tdr = new TechDocRec();
             tdr.init(title, type);
             tdr.file = path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath);
 
-            const tdFilePath = path.join(path.dirname(uri.fsPath), vscode.workspace.getConfiguration().get<string>('vscode-tdr.folder.name') || ".tdr", tdFileName);
+            const tdrRelFileDirs = [
+                { label: path.join(path.dirname(path.relative(vscode.workspace.workspaceFolders[0].uri.fsPath, uri.fsPath)), vscode.workspace.getConfiguration().get<string>('vscode-tdr.folder.name') || ".tdr"), description: "In place" },
+                { label: vscode.workspace.getConfiguration().get<string>('vscode-tdr.folder.tdr.root') || "doc/tdr", description: "Root technical doc record location" },
+                { label: vscode.workspace.getConfiguration().get<string>('vscode-tdr.folder.adr.root') || "doc/adr", description: "Root any decision record location" },
+            ];
 
-            // Set TDR URI
-            tdr.tdrFile = vscode.Uri.file(tdFilePath);
+            const tdrRelFileDir = await vscode.window.showQuickPick(
+                tdrRelFileDirs,
+                {
+                    placeHolder: 'Select an option',
+                    title: 'Location for technical doc record (relative to project root)'
+                }
+            );
 
-            if (startLine) {
-                tdr.startLine = startLine;
+            if (tdrRelFileDir) {
+                const tdrFileName = tdr.title.replace(/\s+/g, '-').replace(/[^\w-]/gi, '') + ".md";
+
+                const tdrFilePath = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, tdrRelFileDir.label, tdrFileName);
+
+                // Set TDR URI
+                tdr.tdrFile = vscode.Uri.file(tdrFilePath);
+
+                if (startLine) {
+                    tdr.startLine = startLine;
+                }
+                if (startColumn) {
+                    tdr.startColumn = startColumn;
+                }
+                if (endLine) {
+                    tdr.endLine = endLine;
+                }
+                if (endColumn) {
+                    tdr.endColumn = endColumn;
+                }
+
+                await tdr.persist();
+
+                this.registerTechDocRec(tdr);
+
+                this.showTechDocRec(tdr);
             }
-            if (startColumn) {
-                tdr.startColumn = startColumn;
-            }
-            if (endLine) {
-                tdr.endLine = endLine;
-            }
-            if (endColumn) {
-                tdr.endColumn = endColumn;
-            }
-
-            await tdr.persist();
-
-            this.registerTechDocRec(tdr);
-
-            this.showTechDocRec(tdr);
         }
     }
 
@@ -558,13 +580,16 @@ export class TechDocRecs extends Observable {
 
             // Register a callback function for when the file is changed
             tdr.fileWatcher.onDidChange(async (uri: vscode.Uri) => {
-                const td = await this.readTDR(uri);
-                if (td) {
-                    if (this._tdrs[tdrId]) {
-                        this._tdrs[tdrId] = td;
-                        this.notifyObservers(this._tdrs);
-                    }
-                }
+                await this.readTDR(uri)
+                    .then((td) => {
+                        if (this._tdrs[tdrId]) {
+                            this._tdrs[tdrId] = td;
+                            this.notifyObservers(this._tdrs);
+                        }
+                    })
+                    .catch((error) => {
+                        console.warn(uri.fsPath + ": " + error);
+                    });
             });
         } else {
             console.error("Undefined TDR file!");
@@ -615,7 +640,6 @@ export class TechDocRecs extends Observable {
             // Read the contents of the file
             fs.readFile(filePath, 'utf8', (err, data) => {
                 if (err) {
-                    console.error(err);
                     reject(err);
                 } else {
                     // Parse the TDR data
@@ -625,7 +649,6 @@ export class TechDocRecs extends Observable {
                         td.tdrFile = uri;
                         resolve(td);
                     } catch (err) {
-                        console.error(err);
                         reject(err);
                     }
                 }
@@ -638,15 +661,18 @@ export class TechDocRecs extends Observable {
 
         if (vscode.workspace.workspaceFolders !== undefined) {
             // Use the workspace root path to find all TDR files
-            const files = vscode.workspace.findFiles('**/*.tdr', '**/node_modules/**', 1000);
+            const files = vscode.workspace.findFiles('**/[0-9]*-*.md', '**/node_modules/**');
 
             // Analyze each file
             files.then((uris) => {
                 uris.forEach(async uri => {
-                    const td = await this.readTDR(uri);
-                    if (td) {
-                        this.registerTechDocRec(td);
-                    }
+                    await this.readTDR(uri)
+                        .then((td) => {
+                            this.registerTechDocRec(td);
+                        })
+                        .catch((error) => {
+                            console.warn(uri.fsPath + ": " + error);
+                        });
                 });
             });
         } else {

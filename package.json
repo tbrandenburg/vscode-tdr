@@ -2,7 +2,7 @@
   "activationEvents": [
     "onStartupFinished",
     "onDebug",
-    "workspaceContains:**/*.tdr"
+    "workspaceContains:**/*.md"
   ],
   "categories": [
     "Other"
@@ -11,10 +11,20 @@
     "configuration": {
       "title": "Technical Doc Records",
       "properties": {
+        "vscode-tdr.folder.adr.root": {
+          "type": "string",
+          "default": "doc/adr",
+          "description": "Specifies the folder name under project root in which any decision records are stored."
+        },
+        "vscode-tdr.folder.tdr.root": {
+          "type": "string",
+          "default": "doc/tdr",
+          "description": "Specifies the folder name under project root in which technical doc records are stored."
+        },
         "vscode-tdr.folder.name": {
           "type": "string",
           "default": ".tdr",
-          "description": "Specifies the folder name in which technical doc records are stored."
+          "description": "Specifies the folder name in which technical doc records are stored alternatively."
         },
         "vscode-tdr.template.debt": {
           "type": "array",
@@ -76,14 +86,6 @@
         "command": "vscode-tdr.addEditorTechDebt",
         "category": "Technical Doc Records",
         "title": "Add technical debt record here"
-      }
-    ],
-    "languages": [
-      {
-        "extensions": [
-          ".tdr"
-        ],
-        "id": "technical-doc-record"
       }
     ],
     "menus": {
