@@ -187,7 +187,7 @@ $(document).ready(function () {
     });
 
     $.each(rows, function (index, row) {
-      $("#meineTabelle tbody").append(row);
+      $(this).closest('table').find("tbody").append(row);
     });
   });
 

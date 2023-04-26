@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as utils from './utils';
 import * as path from 'path';
 
-import { TechDocRecs } from '../techdocrec';
+import { TechDocRecs } from '../techdocrecs';
 import { Observer } from '../patterns/observer';
 
 /**
