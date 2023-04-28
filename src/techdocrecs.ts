@@ -355,7 +355,7 @@ export class TechDocRecs extends Observable {
                         if (answer === "Yes") {
                             this.removeTDR(tdr);
                         }
-                    })
+                    });
             }
         }
     }
