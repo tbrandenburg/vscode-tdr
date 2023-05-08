@@ -2,6 +2,17 @@
   "name": "vscode-tdr",
   "displayName": "vscode-tdr",
   "description": "Technical Doc Records for Visual Studio Code",
+  "keywords": [
+    "adr",
+    "tdr",
+    "docs",
+    "docs-as-code",
+    "debts",
+    "technical-debts"
+  ],
+  "categories": [
+    "Other"
+  ],
   "publisher": "tbrandenburg",
   "license": "MIT",
   "author": {
@@ -21,9 +32,6 @@
     "onStartupFinished",
     "onDebug",
     "workspaceContains:**/*.md"
-  ],
-  "categories": [
-    "Other"
   ],
   "contributes": {
     "configuration": {
