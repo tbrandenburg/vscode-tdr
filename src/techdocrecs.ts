@@ -209,6 +209,32 @@ export class TechDocRecs extends Observable {
         } while (tdr.id in this._tdrs);
     }
 
+    // Reads a TDR based on an URI for internal usage
+    private readTDR(uri: vscode.Uri): Promise<TechDocRec> {
+
+        const filePath = uri.fsPath;
+
+        return new Promise((resolve, reject) => {
+            // Read the contents of the file
+            fs.readFile(filePath, 'utf8', (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    // Parse the TDR data
+                    try {
+                        const td = new TechDocRec();
+                        td.tdrFile = uri;
+                        td.fromString(data);
+                        this.initId(td);
+                        resolve(td);
+                    } catch (err) {
+                        reject(err);
+                    }
+                }
+            });
+        });
+    }    
+
     // Creates a new technical doc record and therewith registers and persists the same
     private async createTDR(title: string, type: string, uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
         if (vscode.workspace.workspaceFolders !== undefined) {
@@ -374,32 +400,6 @@ export class TechDocRecs extends Observable {
         } else {
             vscode.window.showErrorMessage("No technical doc record found!");
         }
-    }
-
-    // Reads a TDR based on an URI for internal usage
-    private readTDR(uri: vscode.Uri): Promise<TechDocRec> {
-
-        const filePath = uri.fsPath;
-
-        return new Promise((resolve, reject) => {
-            // Read the contents of the file
-            fs.readFile(filePath, 'utf8', (err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    // Parse the TDR data
-                    try {
-                        const td = new TechDocRec();
-                        td.tdrFile = uri;
-                        td.fromString(data);
-                        this.initId(td);
-                        resolve(td);
-                    } catch (err) {
-                        reject(err);
-                    }
-                }
-            });
-        });
     }
 
     // Collects present TDRs in workspace and registers them

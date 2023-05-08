@@ -1,9 +1,7 @@
 # Change Log
 
-All notable changes to the "vscode-tdr" extension will be documented in this file.
+## [0.1.0] - 2023-05-08
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
+### Added
 
 - Initial release
