@@ -166,9 +166,13 @@
 					$(document).ready(function () {
 						var options = [
 							"open",
+							"proposed",
+							"accepted",
 							"solved",
 							"invalid",
-							"duplicate"
+							"duplicate",
+							"rejected",
+							"deprecated"
 						];
 
 						$('#techdocrec-resolution').autocomplete({
@@ -185,7 +189,7 @@
 
 				<label for="techdocrec-type">Type</label>
 				<input type="text" id="techdocrec-type" name="techdocrec-type"
-					placeholder="debt/bug/vulnerability/smell/style/todo/fixme/info/decision">
+					placeholder="debt/decision/doc/bug/vulnerability/smell/style/todo/fixme/info">
 				<script>
 					$(document).ready(function () {
 						var options = [
@@ -197,6 +201,7 @@
 							"todo",
 							"fixme",
 							"info",
+							"doc",
 							"decision"
 						];
 

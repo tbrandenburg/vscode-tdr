@@ -1,13 +1,13 @@
 ---
-title: It is so nice!
-id: TDR_2E290F5C
+title: This is my architectural decision
 author: btr8fe
-date: '2023-04-25'
+date: '2023-05-02'
+id: TDR_F3876541
 type: decision
-file: file2.c
-priority: high
+file: Folder\src
 ---
-# It is so nice!
+
+# This is my architectural decision
 
 ## Context and Problem Statement
 

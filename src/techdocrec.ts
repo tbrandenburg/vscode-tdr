@@ -299,6 +299,9 @@ export class TechDocRec {
                     case "decision":
                         diagnostic.severity = vscode.DiagnosticSeverity.Information;
                         break;
+                    case "doc":
+                        diagnostic.severity = vscode.DiagnosticSeverity.Information;
+                        break;
                     default:
                         diagnostic.severity = vscode.DiagnosticSeverity.Information;
                         break;

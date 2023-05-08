@@ -8,7 +8,6 @@ owner: btr8fe
 status: new
 resolution: open
 type: bug
-severity: minor
 priority: low
 startLine: 2
 startColumn: 10

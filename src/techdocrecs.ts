@@ -31,11 +31,60 @@ export class TechDocRecs extends Observable {
         });
 
         context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addExplorerADR', async (selectedResourceUri: vscode.Uri) => {
-            this.createTDR("decision", selectedResourceUri);
+
+            const title = await vscode.window.showInputBox({
+                prompt: 'Enter a title for the architecture decision record:',
+                placeHolder: path.basename(selectedResourceUri.fsPath),
+            });
+
+            if (title) {
+                this.createTDR(title, "decision", selectedResourceUri);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addExplorerTechDebt', async (selectedResourceUri: vscode.Uri) => {
-            this.createTDR("debt", selectedResourceUri);
+
+            const title = await vscode.window.showInputBox({
+                prompt: 'Enter a title for the technical debt record:',
+                placeHolder: path.basename(selectedResourceUri.fsPath),
+            });
+
+            if (title) {
+                this.createTDR(title, "debt", selectedResourceUri);
+            }
+        }));
+
+        context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addExplorerTechDoc', async (selectedResourceUri: vscode.Uri) => {
+
+            const tdrTypes = [
+                { label: "debt",          description: "Technical Debt" },
+                { label: "decision",      description: "Architecture/Design Decision" },
+                { label: "doc",           description: "Documentation" },
+                { label: "bug",           description: "Bug" },
+                { label: "vulnerability", description: "Vulnerability" },
+                { label: "smell",         description: "Smell" },
+                { label: "style",         description: "Style" },
+                { label: "todo",          description: "TODO" },
+                { label: "fixme",         description: "FIXME" },
+                { label: "info",          description: "INFO" }
+            ];
+
+            const tdrType = await vscode.window.showQuickPick(
+                tdrTypes,
+                {
+                    placeHolder: 'Select a type',
+                    title: 'Type of the technical doc record'
+                }
+            );
+
+            const title = await vscode.window.showInputBox({
+                prompt: 'Enter a title for the technical doc record:',
+                placeHolder: path.basename(selectedResourceUri.fsPath),
+            });
+
+            if (tdrType && title) {
+                this.createTDR(title, tdrType.label, selectedResourceUri);
+            }
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addEditorTechDebt', async (selectedResourceUri: vscode.Uri) => {
@@ -44,11 +93,62 @@ export class TechDocRecs extends Observable {
                 return; // No active editor
             }
             let selection = editor.selection;
-            if (selection.isEmpty) {
-                let cursorPosition = editor.selection.active;
-                this.createTDR("debt", selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
-            } else {
-                this.createTDR("debt", selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+
+            const title = await vscode.window.showInputBox({
+                prompt: 'Enter a title for the technical debt record:',
+                placeHolder: path.basename(selectedResourceUri.fsPath),
+            });
+
+            if (title) {
+                if (selection.isEmpty) {
+                    let cursorPosition = editor.selection.active;
+                    this.createTDR(title, "debt", selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
+                } else {
+                    this.createTDR(title, "debt", selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+                }
+            }
+        }));
+
+        context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addEditorTechDoc', async (selectedResourceUri: vscode.Uri) => {
+            let editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                return; // No active editor
+            }
+            let selection = editor.selection;
+
+            const tdrTypes = [
+                { label: "debt",          description: "Technical Debt" },
+                { label: "decision",      description: "Architecture/Design Decision" },
+                { label: "doc",           description: "Documentation" },
+                { label: "bug",           description: "Bug" },
+                { label: "vulnerability", description: "Vulnerability" },
+                { label: "smell",         description: "Smell" },
+                { label: "style",         description: "Style" },
+                { label: "todo",          description: "TODO" },
+                { label: "fixme",         description: "FIXME" },
+                { label: "info",          description: "INFO" }
+            ];
+
+            const tdrType = await vscode.window.showQuickPick(
+                tdrTypes,
+                {
+                    placeHolder: 'Select a type',
+                    title: 'Type of the technical doc record'
+                }
+            );
+
+            const title = await vscode.window.showInputBox({
+                prompt: 'Enter a title for the technical doc record:',
+                placeHolder: path.basename(selectedResourceUri.fsPath),
+            });
+
+            if (tdrType && title) {
+                if (selection.isEmpty) {
+                    let cursorPosition = editor.selection.active;
+                    this.createTDR(title, "debt", selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
+                } else {
+                    this.createTDR(title, "debt", selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+                }
             }
         }));
 
@@ -63,7 +163,7 @@ export class TechDocRecs extends Observable {
         this.getTechDocRecsInWorkspace();
     }
 
-    private initTDR(tdr: TechDocRec, title:string, type:string) {
+    private initTDR(tdr: TechDocRec, title: string, type: string) {
         const currentDate = new Date();
 
         const day = currentDate.getDate().toString().padStart(2, "0");
@@ -101,22 +201,17 @@ export class TechDocRecs extends Observable {
         template.forEach(chapter => {
             tdr.description += "## " + chapter + os.EOL + os.EOL;
         });
-    }    
+    }
 
     private initId(tdr: TechDocRec) {
-        const currentDate = new Date();
-        tdr.id = "TDR_" + crypto.createHash('sha256').update((tdr.title) + currentDate).digest('hex').toUpperCase().substring(0, 8);
+        do {
+            tdr.id = "TDR_" + crypto.createHash('sha256').update((tdr.title) + new Date()).digest('hex').toUpperCase().substring(0, 8);
+        } while (tdr.id in this._tdrs);
     }
 
     // Creates a new technical doc record and therewith registers and persists the same
-    private async createTDR(type: string, uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
-
-        var title = await vscode.window.showInputBox({
-            prompt: 'Enter a title for the technical doc record:',
-            placeHolder: path.basename(uri.fsPath),
-        });
-
-        if (title && (vscode.workspace.workspaceFolders !== undefined)) {
+    private async createTDR(title: string, type: string, uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
+        if (vscode.workspace.workspaceFolders !== undefined) {
 
             const tdr = new TechDocRec();
             this.initTDR(tdr, title, type);

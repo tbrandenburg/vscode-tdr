@@ -83,9 +83,19 @@
         "title": "Add technical debt record"
       },
       {
+        "command": "vscode-tdr.addExplorerTechDoc",
+        "category": "Technical Doc Records",
+        "title": "Add any technical doc record"
+      },
+      {
         "command": "vscode-tdr.addEditorTechDebt",
         "category": "Technical Doc Records",
         "title": "Add technical debt record here"
+      },
+      {
+        "command": "vscode-tdr.addEditorTechDoc",
+        "category": "Technical Doc Records",
+        "title": "Add any technical doc record here"
       }
     ],
     "menus": {
@@ -99,11 +109,21 @@
           "command": "vscode-tdr.addExplorerADR",
           "group": "techdoc",
           "when": "explorerViewletVisible"
+        },
+        {
+          "command": "vscode-tdr.addExplorerTechDoc",
+          "group": "techdoc",
+          "when": "explorerViewletVisible"
         }
       ],
       "editor/context": [
         {
           "command": "vscode-tdr.addEditorTechDebt",
+          "group": "techdoc",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "vscode-tdr.addEditorTechDoc",
           "group": "techdoc",
           "when": "editorTextFocus"
         }
