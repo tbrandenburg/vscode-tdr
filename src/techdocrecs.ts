@@ -204,9 +204,9 @@ export class TechDocRecs extends Observable {
     }
 
     private initId(tdr: TechDocRec) {
-        do {
+        while (tdr.id === undefined || tdr.id === "" || tdr.id in this._tdrs) {
             tdr.id = "TDR_" + crypto.createHash('sha256').update((tdr.title) + new Date()).digest('hex').toUpperCase().substring(0, 8);
-        } while (tdr.id in this._tdrs);
+        }
     }
 
     // Reads a TDR based on an URI for internal usage
