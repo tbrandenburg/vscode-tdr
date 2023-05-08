@@ -180,7 +180,7 @@ export class TechDocRecs extends Observable {
 
         this.initId(tdr);
 
-        tdr.description = os.EOL + "# " + title + os.EOL + os.EOL;
+        tdr.description = os.EOL + "# " + title + os.EOL;
 
         var template = ["Description"];
 
@@ -199,7 +199,7 @@ export class TechDocRecs extends Observable {
         }
 
         template.forEach(chapter => {
-            tdr.description += "## " + chapter + os.EOL + os.EOL;
+            tdr.description += os.EOL + "## " + chapter + os.EOL;
         });
     }
 
