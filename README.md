@@ -1,6 +1,6 @@
 # vscode-tdr
 
-Visual Studio Code extension for documenting and managing technical doc records such as architecture decision records or technical debt records.
+Visual Studio Code extension for documenting and managing technical doc records such as architecture decision records (ADR) or technical debt records.
 
 ![Screenshot](resources/screenshots/screenshot.png)
 
