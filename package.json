@@ -4,6 +4,7 @@
   "description": "Technical Doc Records for Visual Studio Code",
   "keywords": [
     "adr",
+    "madr",
     "tdr",
     "docs",
     "docs-as-code",
