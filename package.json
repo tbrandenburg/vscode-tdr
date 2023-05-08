@@ -1,4 +1,22 @@
 {
+  "name": "vscode-tdr",
+  "displayName": "vscode-tdr",
+  "description": "Technical Doc Records for Visual Studio Code",
+  "publisher": "tbrandenburg",
+  "license": "MIT",
+  "author": {
+    "name": "Tom Brandenburg"
+  },
+  "pricing": "Free",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tbrandenburg/vscode-tdr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tbrandenburg/tdr/issues"
+  },
+  "icon": "resources/techdoc_128.png",
   "activationEvents": [
     "onStartupFinished",
     "onDebug",
@@ -130,7 +148,6 @@
       ]
     }
   },
-  "description": "",
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.1",
@@ -144,13 +161,10 @@
     "mocha": "^10.1.0",
     "typescript": "^4.9.3"
   },
-  "displayName": "vscode-tdr",
-  "publisher": "tbrandenburg",
   "engines": {
     "vscode": "^1.64.0"
   },
   "main": "./out/extension.js",
-  "name": "vscode-tdr",
   "scripts": {
     "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
@@ -158,13 +172,6 @@
     "test": "node ./out/test/runTest.js",
     "vscode:prepublish": "npm run compile",
     "watch": "tsc -watch -p ./"
-  },
-  "icon": "resources/techdoc_128.png",
-  "pricing": "Free",
-  "version": "0.1.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tbrandenburg/vscode-tdr.git"
   },
   "dependencies": {
     "front-matter": "^4.0.2",
