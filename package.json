@@ -145,6 +145,7 @@
     "typescript": "^4.9.3"
   },
   "displayName": "vscode-tdr",
+  "publisher": "tbrandenburg",
   "engines": {
     "vscode": "^1.64.0"
   },
