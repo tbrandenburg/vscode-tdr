@@ -23,6 +23,20 @@ export class TechDocRecs extends Observable {
 
         super();
 
+        const tdrTypes = [
+            { label: "debt", description: "Technical Debt" },
+            { label: "decision", description: "Architecture/Design Decision" },
+            { label: "doc", description: "Documentation" },
+            { label: "req", description: "Requirement" },
+            { label: "bug", description: "Bug" },
+            { label: "vulnerability", description: "Vulnerability" },
+            { label: "smell", description: "Smell" },
+            { label: "style", description: "Style" },
+            { label: "todo", description: "TODO" },
+            { label: "fixme", description: "FIXME" },
+            { label: "info", description: "INFO" }
+        ];
+
         const sidebar = new TechDocRecSidebar(context, this);
 
         // Register Listener for onDidChangeWorkspaceFolders event
@@ -55,19 +69,6 @@ export class TechDocRecs extends Observable {
         }));
 
         context.subscriptions.push(vscode.commands.registerCommand('vscode-tdr.addExplorerTechDoc', async (selectedResourceUri: vscode.Uri) => {
-
-            const tdrTypes = [
-                { label: "debt",          description: "Technical Debt" },
-                { label: "decision",      description: "Architecture/Design Decision" },
-                { label: "doc",           description: "Documentation" },
-                { label: "bug",           description: "Bug" },
-                { label: "vulnerability", description: "Vulnerability" },
-                { label: "smell",         description: "Smell" },
-                { label: "style",         description: "Style" },
-                { label: "todo",          description: "TODO" },
-                { label: "fixme",         description: "FIXME" },
-                { label: "info",          description: "INFO" }
-            ];
 
             const tdrType = await vscode.window.showQuickPick(
                 tdrTypes,
@@ -116,19 +117,6 @@ export class TechDocRecs extends Observable {
             }
             let selection = editor.selection;
 
-            const tdrTypes = [
-                { label: "debt",          description: "Technical Debt" },
-                { label: "decision",      description: "Architecture/Design Decision" },
-                { label: "doc",           description: "Documentation" },
-                { label: "bug",           description: "Bug" },
-                { label: "vulnerability", description: "Vulnerability" },
-                { label: "smell",         description: "Smell" },
-                { label: "style",         description: "Style" },
-                { label: "todo",          description: "TODO" },
-                { label: "fixme",         description: "FIXME" },
-                { label: "info",          description: "INFO" }
-            ];
-
             const tdrType = await vscode.window.showQuickPick(
                 tdrTypes,
                 {
@@ -145,9 +133,9 @@ export class TechDocRecs extends Observable {
             if (tdrType && title) {
                 if (selection.isEmpty) {
                     let cursorPosition = editor.selection.active;
-                    this.createTDR(title, "debt", selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
+                    this.createTDR(title, tdrType.label, selectedResourceUri, cursorPosition.line, cursorPosition.character, cursorPosition.line, cursorPosition.character);
                 } else {
-                    this.createTDR(title, "debt", selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
+                    this.createTDR(title, tdrType.label, selectedResourceUri, selection.start.line, selection.start.character, selection.end.line, selection.end.character);
                 }
             }
         }));
@@ -233,7 +221,7 @@ export class TechDocRecs extends Observable {
                 }
             });
         });
-    }    
+    }
 
     // Creates a new technical doc record and therewith registers and persists the same
     private async createTDR(title: string, type: string, uri: vscode.Uri, startLine?: number, startColumn?: number, endLine?: number, endColumn?: number) {
