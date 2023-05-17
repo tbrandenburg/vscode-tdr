@@ -127,20 +127,15 @@ window.addEventListener('message', event => {
         tdType.textContent = lastTDRs[key].resource.metadata.type;
         tr.appendChild(tdType);
 
-        // Status
-        const tdStatus = document.createElement('td');
-        tdStatus.textContent = lastTDRs[key].resource.metadata.status;
-        tr.appendChild(tdStatus);
-
         // Title
         const tdTitle = document.createElement('td');
         tdTitle.textContent = lastTDRs[key].resource.metadata.title;
         tr.appendChild(tdTitle);
 
-        // Owner
-        const tdOwner = document.createElement('td');
-        tdOwner.textContent = lastTDRs[key].resource.metadata.owner;
-        tr.appendChild(tdOwner);
+        // Date
+        const tdDate = document.createElement('td');
+        tdDate.textContent = lastTDRs[key].resource.metadata.date;
+        tr.appendChild(tdDate);
 
         tableBody.appendChild(tr);
 

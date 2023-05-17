@@ -145,6 +145,13 @@ export class TechDocRecs extends Observable {
             vscode.window.registerWebviewViewProvider("vscode-tdr-sidebar", sidebar)
         );
 
+        // Register listener for diagnostic clicks
+        vscode.languages.onDidChangeDiagnostics((e: vscode.DiagnosticChangeEvent) => {
+            for (let uri of e.uris) {
+                // TODO
+            }
+        });
+
         // Let sidebar observe TDRs
         this.addObserver(sidebar);
 
