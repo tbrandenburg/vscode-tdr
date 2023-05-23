@@ -9,7 +9,10 @@
     "docs",
     "docs-as-code",
     "debts",
-    "technical-debts"
+    "technical-debts",
+    "decisions",
+    "todo",
+    "comment"
   ],
   "categories": [
     "Other"
